@@ -16,6 +16,7 @@
     var utilLayer;
     var gizmoManager;
     var shadowGenerator;
+    var selectedMesh = null;
 
     const createScene = function () {
         // Creates a basic Babylon Scene object
@@ -42,6 +43,7 @@
 
         gizmoManager = new BABYLON.GizmoManager(scene);
 
+
         // Shadow generator
         shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
@@ -63,6 +65,9 @@
 
         return scene;
     };
+
+
+
     const scene = createScene(); //Call the createScene function
     // Register a render loop to repeatedly render the scene
     engine.runRenderLoop(function () {

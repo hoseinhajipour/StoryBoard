@@ -1,0 +1,4 @@
+.height_ctrl {
+    height: 80vh;
+    overflow-y: auto;
+}

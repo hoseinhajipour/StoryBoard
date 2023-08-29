@@ -20,5 +20,9 @@
         "resolve-url-loader": "^4.0.0",
         "sass": "1.32.13",
         "sass-loader": "^12.1.0"
+    },
+    "dependencies": {
+        "@amazon-sumerian-hosts/babylon": "^2.0.6",
+        "wavesurfer.js": "^7.1.5"
     }
 }

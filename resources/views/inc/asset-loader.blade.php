@@ -1,4 +1,4 @@
-<div>
+<div class="height_ctrl">
     @foreach($Scenes as $Scene)
         <div class="card shadow"
              onclick="loadModel('{{ url('storage/'.str_replace("\\", "/", json_decode($Scene->url)[0]->download_link))  }}' )">
@@ -61,7 +61,7 @@
         }
       //  const Currentnim = scene.getAnimationGroupByName(animationGroups[i-1].name);
       //  Currentnim.start();
- 
+
         BABYLON.SceneLoader.ImportAnimations("", asset_url, scene, false,BABYLON.SceneLoaderAnimationGroupLoadingMode.Clean, null, (scene) => {
         });
 
@@ -83,10 +83,6 @@
             gizmoManager.positionGizmoEnabled = true;
             gizmoManager.rotationGizmoEnabled = false;
             gizmoManager.scaleGizmoEnabled = false;
-
-
-
-
         });
     }
 

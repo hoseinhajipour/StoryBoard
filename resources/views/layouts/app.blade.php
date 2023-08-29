@@ -9,7 +9,7 @@
 
     <livewire:styles/>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <style>
         html, body {
             overflow: hidden;

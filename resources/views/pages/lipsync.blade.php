@@ -182,7 +182,7 @@
                     var animationGroup = new BABYLON.AnimationGroup("talk");
 
 
-                    excludeTargets = ["eyeBlinkLeft", "eyeBlinkRight"];
+                    // excludeTargets = ["eyeBlinkLeft", "eyeBlinkRight"];
 
 
                     combineKeyFrames(animationGroup, morphVisemeKeys, audio_duration);
@@ -194,6 +194,7 @@
                     AllZeroKeyframes(animationGroup, audio_duration);
 
                     document.addEventListener('playAnim', () => {
+                        scene.stopAllAnimations();
                         animationGroup.play();
                         console.log('start event triggered on platform');
                     });
@@ -207,11 +208,9 @@
             }
         }
 
-
         function combineKeyFrames(animationGroup, morphVisemeKeys, audio_duration) {
             for (var viseme_name in morphVisemeKeys) {
-                if (viseme_name !== "viseme_sil") {
-                    excludeTargets.push(viseme_name);
+                  //  excludeTargets.push(viseme_name);
                     var VisemeKeys = morphVisemeKeys[viseme_name];
                     var viseme = findMorph(HeadMesh.morphTargetManager, viseme_name);
 
@@ -251,8 +250,60 @@
                     morphTargetAnimation.setKeys(morphTargetKeys);
                     viseme.animations.push(morphTargetAnimation);
                     animationGroup.addTargetedAnimation(morphTargetAnimation, viseme);
+
+            }
+        }
+
+        function findValueOldFrame(old_keys, frame) {
+            console.log(old_keys);
+            old_keys.forEach(old_frame => {
+
+                if (old_frame.frame == frame) {
+                    console.log(frame, old_frame.value);
+                    return old_frame.value;
+                }
+            });
+            return 0;
+        }
+
+        function resampleAnimation(animation, newFrameRate) {
+            // Get the original animation keys
+            var keys = animation.getKeys();
+
+            // Calculate the new time interval between keyframes
+            var newTimeInterval = 1 / newFrameRate;
+
+            // Create an array to store the resampled keys
+            var resampledKeys = [];
+
+            // Iterate through the original keys and resample
+            for (var i = 0; i < keys.length - 1; i++) {
+                var currentKey = keys[i];
+                var nextKey = keys[i + 1];
+                var currentTime = currentKey.frame;
+                var nextTime = nextKey.frame;
+
+                // Interpolate between the current and next keyframes
+                for (var t = currentTime; t < nextTime; t += newTimeInterval) {
+                    var interpolationFactor = (t - currentTime) / (nextTime - currentTime);
+                    var interpolatedValue = currentKey.value + (nextKey.value - currentKey.value) * interpolationFactor;
+
+                    // Push the resampled key to the array
+                    resampledKeys.push({
+                        frame: t,
+                        value: interpolatedValue,
+                    });
                 }
             }
+
+            // Make sure to add the last keyframe
+            resampledKeys.push(keys[keys.length - 1]);
+
+            // Update the animation with the resampled keys
+            animation.setKeys(resampledKeys);
+
+            // Return the resampled animation
+            return animation;
         }
 
         function AllZeroKeyframes(animationGroup, audio_duration) {
@@ -270,27 +321,39 @@
                     continue; // Skip this morph target
                 }
 
-
-                // Create keyframes for zero influence
                 var morphTargetKeys = [];
-                morphTargetKeys.push({frame: 0, value: 0.0});
-                morphTargetKeys.push({frame: totalFrames, value: 0.0});
 
-                // Create an animation for the morph target
-                var zeroAnimation = new BABYLON.Animation(
-                    morphTarget.name,
-                    "influence",
-                    frameRate,
-                    BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-                    BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-                );
-                zeroAnimation.setKeys(morphTargetKeys);
+                if (morphTarget.animations[0]) {
 
-                // Add the animation to the morph target
-                morphTarget.animations.push(zeroAnimation);
 
-                // Add the animation to the animation group
-                animationGroup.addTargetedAnimation(zeroAnimation, morphTarget);
+                    var anim = morphTarget.animations[0];
+
+                    resampleAnimation(anim, 1);
+                } else {
+                    // Create keyframes for zero influence
+
+                    for (let j = 0; j < totalFrames; j++) {
+                        morphTargetKeys.push({frame: j, value: 0.0});
+                    }
+
+                    // Create an animation for the morph target
+                    var zeroAnimation = new BABYLON.Animation(
+                        morphTarget.name,
+                        "influence",
+                        frameRate,
+                        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+                        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+                    );
+                    zeroAnimation.setKeys(morphTargetKeys);
+
+                    // Add the animation to the morph target
+                    morphTarget.animations.push(zeroAnimation);
+
+                    // Add the animation to the animation group
+                    animationGroup.addTargetedAnimation(zeroAnimation, morphTarget);
+                }
+
+
             }
         }
 
@@ -394,17 +457,28 @@
             return normalizedKeyframes;
         }
 
-
         function ExportScene() {
-            /*
-            BABYLON.GLTF2Export.GLTFAsync(scene, "character_anim").then((gltf) => {
-                gltf.downloadFiles();
-            });
+            // Define your export options
+            const exportOptions = {
+                shouldExportNode: function (node) {
+                    // Modify this function to filter specific nodes if needed
+                    return true; // Export all nodes by default
+                },
+                animationExportType: 1, // Export animations (0: None, 1: Only user animations, 2: All animations)
+                embedTextures: true, // Whether to embed textures in the GLB file (false for separate texture files)
+                autoSave: true,// Whether to trigger download automatically (false to handle download manually)
+                animationSampleRate: 60
+            };
 
-             */
-            BABYLON.GLTF2Export.GLBAsync(scene, "character_anim").then((gltf) => {
+            // Export the scene with the specified options
+            BABYLON.GLTF2Export.GLBAsync(scene, "character_anim", exportOptions).then((gltf) => {
+                // Optionally, you can handle the download manually
                 gltf.downloadFiles();
+                console.log("Scene export completed.");
+            }).catch((error) => {
+                console.error("Scene export error:", error);
             });
         }
+
     </script>
 </div>

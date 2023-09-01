@@ -29,7 +29,9 @@
     <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
     <script src="https://cdn.babylonjs.com/viewer/babylon.viewer.js"></script>
     <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
-    <script src="https://cdn.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <!-- links to the latest version of the minified serializers -->
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+
     <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
 </head>
 <body>

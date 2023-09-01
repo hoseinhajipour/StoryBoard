@@ -62,11 +62,11 @@ button.addEventListener('click', function () {
         new_phonemes.push({
             start: region.start,
             duration: region.end - region.start,
-            content: region.content.innerText || 'a',
+            content: region.content.innerText,
         })
     });
     var audioDuration = wavesurfer.getDuration();
-    lipSync(phonemes, audioDuration);
+    lipSync(new_phonemes, audioDuration);
 });
 
 

@@ -56,6 +56,7 @@
             // Define a mapping object that associates phonemes with weights
             var phonemeWeightMapping = {
                 'a': 'viseme_aa',
+                'A': 'viseme_aa',
                 'o': 'viseme_O',
                 'e': 'viseme_E',
                 'w': 'viseme_U',
@@ -63,12 +64,16 @@
                 'k': 'viseme_kk',
                 'f': 'viseme_FF',
                 'n': 'viseme_nn',
+                'm': 'viseme_nn',
                 's': 'viseme_SS',
                 'ch': 'viseme_CH',
                 'c': 'viseme_CH',
                 't': 'viseme_TH',
                 'h': 'viseme_TH',
                 'd': 'viseme_DD',
+                'y': 'viseme_SS',
+                'p': 'viseme_PP',
+                'z': 'viseme_E',
             };
 
             // Check if the phoneme is in the mapping, return default weight if not found
@@ -124,20 +129,20 @@
         scene.debugLayer.show();
 
         var frameRate = 30;
+        var excludeTargets = [];
+
 
         function lipSync(phonemes, audio_duration) {
             if (HeadMesh) {
                 // Ensure that the mesh has a morph target manager
                 if (HeadMesh.morphTargetManager) {
                     var morphVisemeKeys = [];
-                    console.log(phonemes);
                     phonemes.forEach(phoneme => {
 
                         var viseme = findMorph(HeadMesh.morphTargetManager, mapPhoneme(phoneme.content));
 
                         if (viseme) {
                             var start = secondsToFrames(phoneme.start, frameRate);
-
                             if (phoneme.duration < 0.2) {
                                 phoneme.duration = 0.2;
                             }
@@ -163,12 +168,12 @@
                                 value: 0.0
                             });
 
-                            // Initialize morphVisemeKeys[viseme] as an array if it's undefined
-                            if (!morphVisemeKeys[viseme.name]) {
-                                morphVisemeKeys[viseme.name] = [];
+
+                            if (!morphVisemeKeys[mapPhoneme(phoneme.content)]) {
+                                morphVisemeKeys[mapPhoneme(phoneme.content)] = [];
                             }
 
-                            morphVisemeKeys[viseme.name].push(morphTargetKeys);
+                            morphVisemeKeys[mapPhoneme(phoneme.content)].push(morphTargetKeys);
 
 
                         }
@@ -176,46 +181,17 @@
 
                     var animationGroup = new BABYLON.AnimationGroup("talk");
 
-                    for (var viseme_name in morphVisemeKeys) {
 
-                        var VisemeKeys = morphVisemeKeys[viseme_name];
-                        var viseme = findMorph(HeadMesh.morphTargetManager, viseme_name);
+                    excludeTargets = ["eyeBlinkLeft", "eyeBlinkRight"];
 
-                        var morphTargetAnimation = new BABYLON.Animation(
-                            viseme_name + "_anim",
-                            "influence",
-                            frameRate,
-                            BABYLON.Animation.ANIMATIONTYPE_FLOAT,
-                            BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
-                        );
-                        VisemeKeys = VisemeKeys[0];
-                        var morphTargetKeys = [];
-                        morphTargetKeys.push({
-                            frame: 0,
-                            value: 0.0
-                        });
-                        VisemeKeys.forEach(val => {
-                            morphTargetKeys.push({
-                                frame: val.frame,
-                                value: val.value
-                            });
-                        });
 
-                        var endframe = secondsToFrames(audio_duration, 30);
-                        morphTargetKeys.push({
-                            frame: endframe,
-                            value: 0.0
-                        });
-                        console.log(viseme_name, morphTargetKeys);
-                        morphTargetAnimation.setKeys(morphTargetKeys);
-                        viseme.animations.push(morphTargetAnimation);
-                        console.log(viseme);
-                        animationGroup.addTargetedAnimation(morphTargetAnimation, viseme);
-                    }
+                    combineKeyFrames(animationGroup, morphVisemeKeys, audio_duration);
 
 
                     AutoBlinkAnimate(animationGroup, audio_duration);
-                    //  animationGroup.play();
+
+
+                    AllZeroKeyframes(animationGroup, audio_duration);
 
                     document.addEventListener('playAnim', () => {
                         animationGroup.play();
@@ -231,6 +207,93 @@
             }
         }
 
+
+        function combineKeyFrames(animationGroup, morphVisemeKeys, audio_duration) {
+            for (var viseme_name in morphVisemeKeys) {
+                if (viseme_name !== "viseme_sil") {
+                    excludeTargets.push(viseme_name);
+                    var VisemeKeys = morphVisemeKeys[viseme_name];
+                    var viseme = findMorph(HeadMesh.morphTargetManager, viseme_name);
+
+                    var morphTargetAnimation = new BABYLON.Animation(
+                        viseme_name,
+                        "influence",
+                        frameRate,
+                        BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+                        BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+                    );
+
+                    var morphTargetKeys = [];
+                    morphTargetKeys.push({
+                        frame: 0,
+                        value: 0.0
+                    });
+
+
+                    VisemeKeys.forEach(subval => {
+                        subval.forEach(val => {
+                            morphTargetKeys.push({
+                                frame: val.frame,
+                                value: val.value
+                            });
+                        });
+
+                    });
+
+                    var endframe = secondsToFrames(audio_duration, frameRate);
+                    morphTargetKeys.push({
+                        frame: endframe,
+                        value: 0.0
+                    });
+
+                    //  const normalizedKeyframes = normalizeKeyframes(morphTargetKeys);
+
+                    morphTargetAnimation.setKeys(morphTargetKeys);
+                    viseme.animations.push(morphTargetAnimation);
+                    animationGroup.addTargetedAnimation(morphTargetAnimation, viseme);
+                }
+            }
+        }
+
+        function AllZeroKeyframes(animationGroup, audio_duration) {
+            // Calculate total frames
+            var totalFrames = secondsToFrames(audio_duration, frameRate);
+
+
+            // Iterate through morph targets
+            for (let i = 0; i < HeadMesh.morphTargetManager.numTargets; i++) {
+                const morphTarget = HeadMesh.morphTargetManager.getTarget(i);
+
+                // Check if the morph target is in the exclusion list
+                if (excludeTargets.includes(morphTarget.name)) {
+                    console.log("exclude : " + morphTarget.name)
+                    continue; // Skip this morph target
+                }
+
+
+                // Create keyframes for zero influence
+                var morphTargetKeys = [];
+                morphTargetKeys.push({frame: 0, value: 0.0});
+                morphTargetKeys.push({frame: totalFrames, value: 0.0});
+
+                // Create an animation for the morph target
+                var zeroAnimation = new BABYLON.Animation(
+                    morphTarget.name,
+                    "influence",
+                    frameRate,
+                    BABYLON.Animation.ANIMATIONTYPE_FLOAT,
+                    BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+                );
+                zeroAnimation.setKeys(morphTargetKeys);
+
+                // Add the animation to the morph target
+                morphTarget.animations.push(zeroAnimation);
+
+                // Add the animation to the animation group
+                animationGroup.addTargetedAnimation(zeroAnimation, morphTarget);
+            }
+        }
+
         function AutoBlinkAnimate(animationGroup, audio_duration) {
             var eyeBlinkLeft = findMorph(HeadMesh.morphTargetManager, "eyeBlinkLeft");
             var eyeBlinkRight = findMorph(HeadMesh.morphTargetManager, "eyeBlinkRight");
@@ -240,9 +303,7 @@
             var totalFrames = secondsToFrames(audio_duration, frameRate);
 
             // Calculate the number of complete blink cycles
-            console.log(totalFrames);
             var completeCycles = Math.floor(totalFrames / (blinkWait + blinkDuration)) - 1;
-            console.log(completeCycles);
             if (completeCycles > 0) {
                 // Create an array to store the keyframes for the blink animation
                 var morphTargetKeys = [];
@@ -303,9 +364,45 @@
 
         }
 
+        function normalizeKeyframes(keyframes) {
+            // Step 1: Sort the keyframes by the 'frame' property
+            const sortedKeyframes = keyframes.slice().sort((a, b) => a.frame - b.frame);
+
+            // Step 2: Initialize a result array for normalized keyframes
+            const normalizedKeyframes = [];
+
+            // Step 3: Iterate through the sorted keyframes and handle overlaps
+            let previousFrame = -Infinity;
+            for (const keyframe of sortedKeyframes) {
+                // Ensure 'frame' is an integer greater than 0
+                keyframe.frame = Math.max(1, Math.floor(keyframe.frame));
+
+                // Ensure 'value' is between 0 and 1
+                keyframe.value = Math.min(1, Math.max(0, keyframe.value));
+
+                if (keyframe.frame >= previousFrame) {
+                    // No overlap, add the normalized keyframe to the result array
+                    normalizedKeyframes.push({frame: keyframe.frame, value: keyframe.value});
+                    previousFrame = keyframe.frame;
+                } else {
+                    // Handle the overlap here (e.g., by averaging values)
+                    const existingKeyframe = normalizedKeyframes[normalizedKeyframes.length - 1];
+                    existingKeyframe.value = (existingKeyframe.value + keyframe.value) / 2;
+                }
+            }
+
+            return normalizedKeyframes;
+        }
+
 
         function ExportScene() {
-            BABYLON.GLTF2Export.GLBAsync(scene, "fileName").then((gltf) => {
+            /*
+            BABYLON.GLTF2Export.GLTFAsync(scene, "character_anim").then((gltf) => {
+                gltf.downloadFiles();
+            });
+
+             */
+            BABYLON.GLTF2Export.GLBAsync(scene, "character_anim").then((gltf) => {
                 gltf.downloadFiles();
             });
         }

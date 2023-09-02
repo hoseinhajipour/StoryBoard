@@ -29,28 +29,29 @@
             </div>
         </div>
     @endforeach
-        <hr/>
-        @foreach($Animations as $Animation)
-            <div class="card shadow"
-                 onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}' )">
-                <div class="card-body">
-                    <img src="{{Voyager::image($Animation->icon)}}" width="128">
-                    {{$Animation->title}}
-                </div>
+    <hr/>
+    @foreach($Animations as $Animation)
+        <div class="card shadow"
+             onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}' )">
+            <div class="card-body">
+                <img src="{{Voyager::image($Animation->icon)}}" width="128">
+                {{$Animation->title}}
             </div>
-        @endforeach
+        </div>
+    @endforeach
     <button class="btn btn-primary" onclick="ExportScene()">Export Scene</button>
 </div>
 <script>
-    function loadAnimation(asset_url) {
-/*
 
-        const walkAnim = scene.getAnimationGroupByName("Walking");
-        const walkBackAnim = scene.getAnimationGroupByName("WalkingBack");
-        const idleAnim = scene.getAnimationGroupByName("Idle");
-        const sambaAnim = scene.getAnimationGroupByName("Samba");
-        sambaAnim.start();
-*/
+    function loadAnimation(asset_url) {
+        /*
+
+                const walkAnim = scene.getAnimationGroupByName("Walking");
+                const walkBackAnim = scene.getAnimationGroupByName("WalkingBack");
+                const idleAnim = scene.getAnimationGroupByName("Idle");
+                const sambaAnim = scene.getAnimationGroupByName("Samba");
+                sambaAnim.start();
+        */
         // Get all animation groups in the scene
         var animationGroups = scene.animationGroups;
 
@@ -59,14 +60,15 @@
             var animationGroupName = animationGroups[i].name;
             console.log("AnimationGroup name:", animationGroupName);
         }
-      //  const Currentnim = scene.getAnimationGroupByName(animationGroups[i-1].name);
-      //  Currentnim.start();
+        //  const Currentnim = scene.getAnimationGroupByName(animationGroups[i-1].name);
+        //  Currentnim.start();
 
-        BABYLON.SceneLoader.ImportAnimations("", asset_url, scene, false,BABYLON.SceneLoaderAnimationGroupLoadingMode.Clean, null, (scene) => {
+        BABYLON.SceneLoader.ImportAnimations("", asset_url, scene, false, BABYLON.SceneLoaderAnimationGroupLoadingMode.Clean, null, (scene) => {
         });
 
 
     }
+
     function loadModel(asset_url) {
 
         BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
@@ -106,9 +108,79 @@
                 break;
         }
     });
+
     function ExportScene() {
         BABYLON.GLTF2Export.GLBAsync(scene, "fileName").then((gltf) => {
             gltf.downloadFiles();
         });
     }
+</script>
+
+
+<script type="module">
+
+    import {Timeliner} from './timeliner/src/timeliner.js'
+
+    var target = {
+        x: 0,
+        y: 0,
+        rotate: 0
+    };
+
+    // initialize timeliner
+    var timeliner = new Timeliner(target);
+    timeliner.addLayer('x');
+    timeliner.addLayer('y');
+    timeliner.addLayer('rotate');
+
+    timeliner.load({
+        "version": "1.2.0",
+        "modified": "Mon Dec 08 2014 10:41:11 GMT+0800 (SGT)",
+        "title": "Untitled",
+        "layers": [{
+            "name": "x",
+            "values": [{"time": 0.1, "value": 0, "_color": "#893c0f", "tween": "quadEaseIn"}, {
+                "time": 3,
+                "value": 3.500023,
+                "_color": "#b074a0"
+            }],
+            "tmpValue": 3.500023,
+            "_color": "#6ee167"
+        }, {
+            "name": "y",
+            "values": [{"time": 0.1, "value": 0, "_color": "#abac31", "tween": "quadEaseOut"}, {
+                "time": 0.5,
+                "value": -1.000001,
+                "_color": "#355ce8",
+                "tween": "quadEaseIn"
+            }, {"time": 1.1, "value": 0, "_color": "#47e90", "tween": "quadEaseOut"}, {
+                "time": 1.7,
+                "value": -0.5,
+                "_color": "#f76bca",
+                "tween": "quadEaseOut"
+            }, {"time": 2.3, "value": 0, "_color": "#d59cfd"}],
+            "tmpValue": -0.5,
+            "_color": "#8bd589"
+        }, {
+            "name": "rotate",
+            "values": [{
+                "time": 0.1,
+                "value": -25.700014000000003,
+                "_color": "#f50ae9",
+                "tween": "quadEaseInOut"
+            }, {"time": 2.8, "value": 0, "_color": "#2e3712"}],
+            "tmpValue": -25.700014000000003,
+            "_color": "#2d9f57"
+        }]
+    });
+
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+      }
+
+    animate();
+
+
 </script>

@@ -1,193 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <title>/frame_js / editor</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link rel="manifest" href="manifest_editor.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>@yield('title') | {{ config('app.name') }}</title>
+
+    <livewire:styles/>
+    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 80vh;
+            touch-action: none;
+        }
+
+        #ghostpane {
+            top: unset !important;
+            bottom: 0px;
+        }
+
+        body {
+            background: #343434;
+            color: white;
+        }
+    </style>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+    <script src="https://cdn.babylonjs.com/viewer/babylon.viewer.js"></script>
+    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <!-- links to the latest version of the minified serializers -->
+    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+    <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+
 </head>
-<body ontouchstart="">
-<link href="css/main.css" rel="stylesheet" />
-<link id="theme" href="css/dark.css" rel="stylesheet" />
+<body>
 
-<link rel="stylesheet" href="js/libs/codemirror/codemirror.css">
-<link rel="stylesheet" href="js/libs/codemirror/theme/monokai.css">
-<script src="js/libs/codemirror/codemirror.js"></script>
-<script src="js/libs/codemirror/mode/javascript.js"></script>
 
-<link rel="stylesheet" href="js/libs/codemirror/addon/dialog/dialog.css">
-<link rel="stylesheet" href="js/libs/codemirror/addon/search/matchesonscrollbar.css">
-<script src="js/libs/codemirror/addon/dialog/dialog.js"></script>
-<script src="js/libs/codemirror/addon/search/searchcursor.js"></script>
-<script src="js/libs/codemirror/addon/search/search.js"></script>
-<script src="js/libs/codemirror/addon/scroll/annotatescrollbar.js"></script>
-<script src="js/libs/codemirror/addon/search/matchesonscrollbar.js"></script>
-<script src="js/libs/codemirror/addon/search/jump-to-line.js"></script>
+<main>
+    {{ $slot }}
+</main>
 
-<script src="js/libs/signals.min.js"></script>
-
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.9.6/dist/ffmpeg.min.js" defer></script>
-
+<livewire:scripts/>
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
 <script type="module">
 
-    import { Editor } from './js/Editor.js';
-    import { Viewport } from './js/Viewport.js';
-    import { Code } from './js/Code.js';
-    import { Sidebar } from './js/Sidebar.js';
-    import { Controls } from './js/Controls.js';
-    import { Timeline } from './js/Timeline.js';
-    import { Menubar } from './js/Menubar.js';
+    import {Timeliner} from './timeliner/src/timeliner.js'
 
-    var editor = new Editor();
+    var target = {
+        x: 0,
+        y: 0,
+        rotate: 0
+    };
 
-    var viewport = new Viewport( editor );
-    document.body.appendChild( viewport.dom );
+    // initialize timeliner
+    var timeliner = new Timeliner(target);
+    timeliner.addLayer('x');
+    timeliner.addLayer('y');
+    timeliner.addLayer('rotate');
 
-    var code = new Code( editor );
-    document.body.appendChild( code.dom );
+    timeliner.load({
+        "version": "animator",
+        "modified": "Mon Dec 08 2014 10:41:11 GMT+0800 (SGT)",
+        "title": "Untitled",
+        "layers": []
+    });
 
-    var sidebar = new Sidebar( editor );
-    document.body.appendChild( sidebar.dom );
 
-    var controls = new Controls( editor );
-    document.body.appendChild( controls.dom );
-
-    var timeline = new Timeline( editor );
-    document.body.appendChild( timeline.dom );
-
-    var menubar = new Menubar( editor );
-    document.body.appendChild( menubar.dom );
-
-    // LocalStorage
-
-    editor.signals.animationAdded.add( saveState );
-    editor.signals.animationModified.add( saveState );
-    editor.signals.animationRemoved.add( saveState );
-    editor.signals.animationRenamed.add( saveState );
-    editor.signals.effectCompiled.add( saveState );
-    editor.signals.effectRenamed.add( saveState );
-    editor.signals.scriptChanged.add( saveState );
-    editor.signals.scriptRemoved.add( saveState );
-    editor.signals.editorCleared.add( saveState );
-
-    var timeout;
-
-    function saveState() {
-
-        clearTimeout( timeout );
-
-        timeout = setTimeout( function () {
-
-            editor.config.setKey( 'state', JSON.stringify( editor.toJSON() ) );
-
-        }, 1000 );
-
+    function animate() {
+        requestAnimationFrame(animate);
     }
 
-    //
-
-    var state = editor.config.getKey( 'state' );
-
-    if ( state !== undefined ) {
-
-        editor.fromJSON( JSON.parse( state ) );
-
-    }
-
-    // Short-cuts
-
-    document.addEventListener( 'keydown', function ( event ) {
-
-        if ( event.metaKey || event.ctrlKey ) {
-
-            switch ( event.keyCode ) {
-                case 83: // prevent CMD + S
-                    event.preventDefault();
-                    break;
-                case 69: // CMD + E to export
-                    event.preventDefault();
-                    editor.signals.exportState.dispatch();
-                    break;
-            }
-
-            return;
-
-        }
-
-        switch ( event.keyCode ) {
-
-            case 8: // prevent browser back
-                event.preventDefault();
-                break;
-            case 32:
-                editor.player.isPlaying ? editor.stop() : editor.play();
-                break;
-            case 37:
-                event.preventDefault();
-                editor.setTime( editor.player.currentTime - editor.player.playbackRate );
-                break;
-            case 39:
-                event.preventDefault();
-                editor.setTime( editor.player.currentTime + editor.player.playbackRate );
-                break;
-            case 38:
-                event.preventDefault();
-                editor.speedUp();
-                break;
-            case 40:
-                event.preventDefault();
-                editor.speedDown();
-                break;
-            case 83:
-                break;
-
-        }
-
-    } );
-
-    // Drop
-
-    document.addEventListener( 'dragover', function ( event ) {
-
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'copy';
-
-    }, false );
-
-    document.addEventListener( 'drop', function ( event ) {
-
-        event.preventDefault();
-
-        if ( event.dataTransfer.files.length > 0 ) {
-
-            var reader = new FileReader();
-            reader.addEventListener( 'load', function ( event ) {
-
-                if ( confirm( 'Any unsaved data will be lost. Are you sure?' ) ) {
-
-                    editor.clear();
-                    editor.fromJSON( JSON.parse( event.target.result ) );
-
-                }
-
-            }, false );
-            reader.readAsText( event.dataTransfer.files[ 0 ] );
-
-        }
-
-    }, false );
-
-    //
-
-    window.addEventListener( 'resize', function () {
-
-        editor.signals.windowResized.dispatch();
-
-    } );
-
-    editor.signals.windowResized.dispatch();
+    animate();
 
 
 </script>
+
 </body>
 </html>

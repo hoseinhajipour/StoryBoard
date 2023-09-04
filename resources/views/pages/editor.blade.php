@@ -5,7 +5,7 @@
             render
         </div>
         <div class="col-4">
-            panel
+            <livewire:inc.asset-loader/>
         </div>
     </div>
 </div>

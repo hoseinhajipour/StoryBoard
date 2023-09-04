@@ -100,7 +100,7 @@
     const createScene = function () {
         const scene = new BABYLON.Scene(engine);
         var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), scene);
-        camera.setPosition(new BABYLON.Vector3(0, 0, -10));
+        camera.setPosition(new BABYLON.Vector3(0, 2, -10));
         camera.attachControl(canvas, true);
         const light_0 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         light_0.intensity = 0.7;
@@ -125,6 +125,23 @@
         // Attach camera to the SSAO render pipeline
         scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", camera);
 
+
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "f" || event.key === "F") {
+                // Get the position of the selected gizmo
+                console.log(selectedMesh)
+                if (selectedMesh) {
+                    var meshPosition = selectedMesh.position;
+                    camera.target = meshPosition;
+
+                    // Move the camera closer to the object
+                    var distance = 5; // Adjust this value as needed
+                    var direction = camera.position.subtract(meshPosition).normalize();
+                    camera.setPosition(meshPosition.add(direction.scale(-distance)));
+                }
+            }
+        });
         return scene;
     };
 

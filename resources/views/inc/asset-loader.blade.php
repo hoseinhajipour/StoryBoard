@@ -68,12 +68,15 @@
             @endforeach
         </div>
     </div>
-
-    <button class="btn btn-primary" onclick="ExportScene()">Export Scene</button>
 </div>
 <script>
 
     function loadAnimation(asset_url) {
+        BABYLON.SceneLoader.ImportAnimations("", asset_url, scene,
+            false, BABYLON.SceneLoaderAnimationGroupLoadingMode.Clean, null, (object) => {
+                var animationGroups = scene.animationGroups;
+                MasteranimationGroup = animationGroups[1];
+            });
         /*
 
                 const walkAnim = scene.getAnimationGroupByName("Walking");
@@ -81,8 +84,8 @@
                 const idleAnim = scene.getAnimationGroupByName("Idle");
                 const sambaAnim = scene.getAnimationGroupByName("Samba");
                 sambaAnim.start();
-        */
-        // Get all animation groups in the scene
+
+                        // Get all animation groups in the scene
         var animationGroups = scene.animationGroups;
 
         // Loop through animation groups and log their names
@@ -95,6 +98,7 @@
 
         BABYLON.SceneLoader.ImportAnimations("", asset_url, scene, false, BABYLON.SceneLoaderAnimationGroupLoadingMode.Clean, null, (scene) => {
         });
+        */
 
 
     }
@@ -115,35 +119,13 @@
             gizmoManager.positionGizmoEnabled = true;
             gizmoManager.rotationGizmoEnabled = false;
             gizmoManager.scaleGizmoEnabled = false;
+
+
+            updateObjectNamesFromScene();
         });
     }
 
-    document.addEventListener("keydown", function (event) {
-        // Check the key code and toggle gizmos accordingly
-        switch (event.key) {
-            case "e":
-                gizmoManager.positionGizmoEnabled = false;
-                gizmoManager.rotationGizmoEnabled = true;
-                gizmoManager.scaleGizmoEnabled = false;
-                break;
-            case "w":
-                gizmoManager.positionGizmoEnabled = true;
-                gizmoManager.rotationGizmoEnabled = false;
-                gizmoManager.scaleGizmoEnabled = false;
-                break;
-            case "s":
-                gizmoManager.positionGizmoEnabled = false;
-                gizmoManager.rotationGizmoEnabled = false;
-                gizmoManager.scaleGizmoEnabled = true;
-                break;
-        }
-    });
 
-    function ExportScene() {
-        BABYLON.GLTF2Export.GLBAsync(scene, "fileName").then((gltf) => {
-            gltf.downloadFiles();
-        });
-    }
 </script>
 
 

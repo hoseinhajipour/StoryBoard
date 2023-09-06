@@ -2,3 +2,9 @@
     height: 80vh;
     overflow-y: auto;
 }
+
+.ObjectSelect {
+    background-color: white;
+    color: black;
+    padding: 5px;
+}

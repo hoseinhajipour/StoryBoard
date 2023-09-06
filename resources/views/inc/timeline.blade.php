@@ -1,5 +1,8 @@
 <div class="w-100">
     <button class="btn btn-primary" id="play-button">Play</button>
+    <label id="frameView">
+        <span id="current_frame">0</span><span>/</span><span id="total_frames">100</span>
+    </label>
     <div class="timeline-container">
 
         <input type="range" class="form-control" value="0"
@@ -31,9 +34,11 @@
                 playing = true;
 
                 MasteranimationGroup.play();
+                MasteranimationGroup.goToFrame(slider.value);
 
                 slider.max = MasteranimationGroup.animatables[0].toFrame;
-
+                $("#current_frame").html(slider.value);
+                $("#total_frames").html(slider.max / frameRate);
                 // clear old interval in case playground is run more than once
                 if (window.interval) {
                     clearInterval(window.interval);
@@ -43,6 +48,7 @@
                 window.interval = setInterval(() => {
                     if (MasteranimationGroup.animatables[0]) {
                         slider.value = MasteranimationGroup.animatables[0].masterFrame;
+                        $("#current_frame").html(slider.value/ frameRate);
                     }
 
                 }, 500);
@@ -50,10 +56,8 @@
         }
 
         function updateFrame() {
-          //  MasteranimationGroup.play();
-       //     MasteranimationGroup.animatables[0].masterFrame = slider.value;
-
             MasteranimationGroup.goToFrame(slider.value);
+
         }
 
         let startTime = null;

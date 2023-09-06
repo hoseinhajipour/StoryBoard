@@ -7,6 +7,7 @@ var shadowGenerator;
 var selectedMesh = null;
 var objectNames = [];
 var Maincamera;
+var frameRate = 30;
 const createScene = function () {
     const scene = new BABYLON.Scene(engine);
     Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), scene);

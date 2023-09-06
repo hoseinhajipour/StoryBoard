@@ -1,7 +1,21 @@
-<div>
-    Object List
-    <ul id="objectList"></ul>
-    <ul id="lightList"></ul>
+<div class="my-2">
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    Object List
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body bg-dark text-white">
+                    <ul id="objectList"></ul>
+                    <ul id="lightList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @push('script')
@@ -9,12 +23,14 @@
         // This function will populate the ul elements with the object names and light names.
         function updateObjectNamesFromScene() {
             let objectNames = scene.meshes.map(function (mesh) {
-                return mesh.name;
+                return { id: mesh.uniqueId, name: mesh.name };
             });
 
+            console.log(scene.meshes);
             let lights = scene.lights.map(function (light) {
-                return light.name;
+                return { id: light.uniqueId, name: light.name };
             });
+
 
             // Get references to the ul elements
             let objectList = document.getElementById("objectList");
@@ -25,32 +41,35 @@
             lightList.innerHTML = "";
 
             // Add object names to the objectList
-            objectNames.forEach(function (name) {
+            objectNames.forEach(function (obj) {
                 let li = document.createElement("li");
-                li.textContent = name;
+                li.textContent = obj.name;
+                li.setAttribute("data-id", obj.id); // Set the data-id attribute with the object's ID
                 li.addEventListener("click", function () {
-                    selectObject(name);
+                    selectObject(obj.id); // Pass the object's ID when selecting
                 });
 
                 objectList.appendChild(li);
             });
 
+
             // Add light names to the lightList
-            lights.forEach(function (name) {
+            lights.forEach(function (light) {
                 let li = document.createElement("li");
-                li.textContent = name;
+                li.textContent = light.name;
                 li.addEventListener("click", function () {
-                    selectLight(name);
+                    selectLight(light.name);
                 });
                 lightList.appendChild(li);
             });
         }
-        // Your selectObject function
-        function selectObject(objectName) {
-            // Find the corresponding mesh by name
-            let selectedMesh = scene.getMeshByName(objectName);
+        // Modify the selectObject function to accept an object ID
+        function selectObject(objectId) {
+            // Find the corresponding mesh by ID
+            let selectedMesh = scene.getMeshByUniqueID(objectId);
 
             if (selectedMesh) {
+                HeadMesh=selectedMesh;
                 // Add your gizmo and shadow generation logic here
                 gizmoManager.attachToMesh(selectedMesh);
                 selectedMesh.receiveShadows = true;
@@ -65,7 +84,7 @@
 
                 for (let i = 0; i < objectItems.length; i++) {
                     let item = objectItems[i];
-                    if (item.textContent === objectName) {
+                    if (item.getAttribute("data-id") === objectId.toString()) {
                         item.classList.add("ObjectSelect");
                     } else {
                         item.classList.remove("ObjectSelect");
@@ -73,6 +92,8 @@
                 }
             }
         }
+
+
         // Your selectLight function
         function selectLight(lightName) {
             // Find the corresponding light by name
@@ -85,6 +106,7 @@
                 console.log("Selected light: " + selectedLight.name);
             }
         }
+
         // Call the function to initially populate the lists
         updateObjectNamesFromScene();
     </script>

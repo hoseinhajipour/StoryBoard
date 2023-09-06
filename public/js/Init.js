@@ -10,8 +10,10 @@ var Maincamera;
 var frameRate = 30;
 const createScene = function () {
     const scene = new BABYLON.Scene(engine);
-    Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 10, new BABYLON.Vector3(0, 0, 0), scene);
-    Maincamera.setPosition(new BABYLON.Vector3(0, 2, -10));
+    Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 5, new BABYLON.Vector3(0, 0, 0), scene);
+    Maincamera.setPosition(new BABYLON.Vector3(0, 1.5, 2));
+    Maincamera.minZ=0.001;
+    Maincamera.setTarget(new BABYLON.Vector3(0, 1.5, 0));
     Maincamera.attachControl(canvas, true);
     const light_0 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
     light_0.intensity = 0.7;

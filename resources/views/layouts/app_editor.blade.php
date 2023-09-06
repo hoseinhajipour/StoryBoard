@@ -35,18 +35,34 @@
             color: white;
         }
     </style>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
-    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
-    <script src="https://cdn.babylonjs.com/viewer/babylon.viewer.js"></script>
-    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
-    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
-    <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="{{asset("js/lib/babylon.js")}}"></script>
+    <script src="{{asset("js/lib/babylonjs.loaders.min.js")}}"></script>
+    <script src="{{asset("js/lib/babylon.inspector.bundle.js")}}"></script>
+    <script src="{{asset("js/lib/babylon.viewer.js")}}"></script>
+    <script src="{{asset("js/lib/babylon.gui.min.js")}}"></script>
+    <script src="{{asset("js/lib/babylonjs.serializers.min.js")}}"></script>
+    <script src="{{asset("js/lib/babylonjs.postProcess.min.js")}}"></script>
 
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a href="{{ route('index') }}" class="navbar-brand">
+            <i class="fa fa-code text-primary"></i> {{ config('app.name') }}
+        </a>
 
+        <button type="button" data-bs-toggle="collapse" data-bs-target="#nav" class="navbar-toggler">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div id="nav" class="collapse navbar-collapse">
+            <div class="navbar-nav ms-auto">
+                <a href="#" class="nav-link">File</a>
+            </div>
+        </div>
+    </div>
+</nav>
 <main>
     {{ $slot }}
 </main>

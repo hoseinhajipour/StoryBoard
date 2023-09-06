@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Aug 25, 2023 at 06:21 PM
+-- Generation Time: Sep 04, 2023 at 08:26 PM
 -- Server version: 8.0.31
 -- PHP Version: 8.1.13
 
@@ -37,7 +37,15 @@ CREATE TABLE IF NOT EXISTS `animations` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `animations`
+--
+
+INSERT INTO `animations` (`id`, `title`, `icon`, `length`, `url`, `created_at`, `updated_at`) VALUES
+(1, 'walk', NULL, NULL, '[{\"download_link\":\"animations\\\\August2023\\\\vNfb0Fa4NZ8dLXG9DmJh.glb\",\"original_name\":\"walk.glb\"}]', '2023-08-25 16:21:19', '2023-08-25 16:21:19'),
+(2, 'dying', NULL, NULL, '[{\"download_link\":\"animations\\\\August2023\\\\gJoSF3AbbSGPUrlhYaP1.fbx\",\"original_name\":\"Dying.fbx\"}]', '2023-08-29 15:51:52', '2023-08-29 15:53:47');
 
 -- --------------------------------------------------------
 
@@ -82,14 +90,16 @@ CREATE TABLE IF NOT EXISTS `characters` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `characters`
 --
 
 INSERT INTO `characters` (`id`, `icon`, `title`, `url`, `created_at`, `updated_at`) VALUES
-(1, 'characters\\August2023\\U245J2HBmdCznqt575gm.jpg', 'girl', '[{\"download_link\":\"characters\\\\August2023\\\\pJNwzMBloPwdiUkFJOYM.glb\",\"original_name\":\"girl.glb\"}]', '2023-08-25 12:26:23', '2023-08-25 12:32:51');
+(1, 'characters\\August2023\\U245J2HBmdCznqt575gm.jpg', 'girl', '[{\"download_link\":\"characters\\\\August2023\\\\pJNwzMBloPwdiUkFJOYM.glb\",\"original_name\":\"girl.glb\"}]', '2023-08-25 12:26:23', '2023-08-25 12:32:51'),
+(2, NULL, 'Soldier', '[{\"download_link\":\"characters\\\\August2023\\\\alivGd2MagiFTYMOmPlz.glb\",\"original_name\":\"Soldier.glb\"}]', '2023-08-25 16:44:43', '2023-08-25 16:44:43'),
+(3, 'characters\\August2023\\TAgaLQZP2vttbq4RNYgf.png', 'male', '[{\"download_link\":\"characters\\\\August2023\\\\naPwiKre5KXdrP73Yi7r.glb\",\"original_name\":\"63ffb8f69dc8b8dcb3b5cf7c.glb\"}]', '2023-08-29 15:46:23', '2023-08-29 15:46:23');
 
 -- --------------------------------------------------------
 

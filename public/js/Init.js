@@ -52,7 +52,7 @@ window.addEventListener("resize", function () {
     engine.resize();
 });
 
-//  scene.debugLayer.show();
+scene.debugLayer.show();
 document.addEventListener("keydown", function (event) {
     // Check the key code and toggle gizmos accordingly
 

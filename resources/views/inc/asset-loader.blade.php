@@ -37,7 +37,7 @@
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             @foreach($Characters as $Character)
                 <div class="card shadow"
-                     onclick="loadModel('{{ url('storage/'.str_replace("\\", "/", json_decode($Character->url)[0]->download_link))  }}' )">
+                     onclick="loadModel('{{ url('storage/'.str_replace("\\", "/", json_decode($Character->url)[0]->download_link))  }}','{{$Character->title}}' )">
                     <div class="card-body">
                         <img src="{{Voyager::image($Character->icon)}}" width="128">
                         {{$Character->title}}
@@ -71,43 +71,82 @@
 </div>
 <script>
 
-    function loadAnimation(asset_url) {
-        BABYLON.SceneLoader.ImportAnimations("", asset_url, scene,
-            false, BABYLON.SceneLoaderAnimationGroupLoadingMode.Clean, null, (object) => {
-                var animationGroups = scene.animationGroups;
-                MasteranimationGroup = animationGroups[1];
-            });
-        /*
+    function copyAnimations(sourceSkeleton, targetSkeleton) {
+        // Iterate through the source skeleton's animations
+        for (var i = 0; i < sourceSkeleton.animationRanges.length; i++) {
+            var animationRange = sourceSkeleton.animationRanges[i];
 
-                const walkAnim = scene.getAnimationGroupByName("Walking");
-                const walkBackAnim = scene.getAnimationGroupByName("WalkingBack");
-                const idleAnim = scene.getAnimationGroupByName("Idle");
-                const sambaAnim = scene.getAnimationGroupByName("Samba");
-                sambaAnim.start();
+            // Create a new animation range on the target skeleton with the same name
+            var targetAnimationRange = targetSkeleton.createAnimationRange(animationRange.name, animationRange.from, animationRange.to);
 
-                        // Get all animation groups in the scene
-        var animationGroups = scene.animationGroups;
+            // Copy keyframes from the source animation to the target animation
+            for (var j = 0; j < sourceSkeleton.bones.length; j++) {
+                var sourceBone = sourceSkeleton.bones[j];
+                var targetBone = targetSkeleton.getBoneByName(sourceBone.name);
 
-        // Loop through animation groups and log their names
-        for (var i = 0; i < animationGroups.length; i++) {
-            var animationGroupName = animationGroups[i].name;
-            console.log("AnimationGroup name:", animationGroupName);
+                if (targetBone) {
+                    var sourceAnimation = sourceBone.animations[i];
+
+                    if (sourceAnimation) {
+                        // Clone the animation from the source bone to the target bone
+                        var targetAnimation = sourceAnimation.clone();
+
+                        // Add the cloned animation to the target animation range
+                        targetAnimationRange.addTargetedAnimation(targetAnimation, targetBone);
+                    }
+                }
+            }
         }
-        //  const Currentnim = scene.getAnimationGroupByName(animationGroups[i-1].name);
-        //  Currentnim.start();
+    }
 
-        BABYLON.SceneLoader.ImportAnimations("", asset_url, scene, false, BABYLON.SceneLoaderAnimationGroupLoadingMode.Clean, null, (scene) => {
+    function findNodeByName(node, name) {
+        if (node.name === name) {
+            return node; // Node with the specified name found
+        }
+
+        for (var i = 0; i < node.getChildren().length; i++) {
+            var child = node.getChildren()[i];
+            var foundNode = findNodeByName(child, name);
+            if (foundNode) {
+                return foundNode; // Node found within a child
+            }
+        }
+
+        return null; // Node not found within selectedNode or its children
+    }
+
+
+    function loadAnimation(asset_url) {
+        BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
+            var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
+
+            var animatables = lastGroup._animatables;
+            animatables.forEach(anim => {
+                var new_target = findNodeByName(selectedMesh, anim.target.name);
+                if (new_target) {
+                    var animations = anim.target.animations;
+                    animations.forEach(_anim => {
+                        new_target.animations.push(_anim);
+                        MasteranimationGroup.addTargetedAnimation(_anim, new_target);
+                    })
+                }
+            });
+            lastGroup.dispose();
+            meshes.forEach(mesh => {
+                mesh.dispose();
+            });
+            updateObjectNamesFromScene();
         });
-        */
-
 
     }
 
-    function loadModel(asset_url) {
+    function loadModel(asset_url, name) {
 
         BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
-
             selectedMesh = meshes[0];
+            if (name) {
+                selectedMesh.name = name;
+            }
             gizmoManager.attachToMesh(meshes[0]);
 
             meshes.forEach(function (mesh) {

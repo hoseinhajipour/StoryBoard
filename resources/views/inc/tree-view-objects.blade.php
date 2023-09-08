@@ -12,6 +12,7 @@
                 <div class="accordion-body bg-dark text-white">
                     <ul id="objectList"></ul>
                     <ul id="lightList"></ul>
+                    <ul id="AnimationList"></ul>
                 </div>
             </div>
         </div>
@@ -23,12 +24,12 @@
         // This function will populate the ul elements with the object names and light names.
         function updateObjectNamesFromScene() {
             let objectNames = scene.meshes.map(function (mesh) {
-                return { id: mesh.uniqueId, name: mesh.name };
+                return {id: mesh.uniqueId, name: mesh.name};
             });
 
-            console.log(scene.meshes);
+
             let lights = scene.lights.map(function (light) {
-                return { id: light.uniqueId, name: light.name };
+                return {id: light.uniqueId, name: light.name};
             });
 
 
@@ -62,14 +63,40 @@
                 });
                 lightList.appendChild(li);
             });
+
+            let animations = scene.animationGroups.map(function (anim) {
+                return {id: anim.uniqueId, name: anim.name};
+            });
+            let AnimationList = document.getElementById("AnimationList");
+            AnimationList.innerHTML = "";
+
+
+            animations.forEach(function (animation, index) {
+                let anim = document.createElement("li");
+                anim.textContent = animation.name;
+                anim.setAttribute("data-id", index); // Set the data-id attribute with the object's ID
+                anim.addEventListener("click", function () {
+                    selectAnim(index); // Pass the current index when selecting
+                });
+                AnimationList.appendChild(anim);
+            });
+
+            console.log(scene.skeletons);
         }
+
+        function selectAnim(RowID) {
+            let NewAnim = scene.animationGroups[RowID];
+            NewAnim.play();
+            console.log(NewAnim);
+        }
+
         // Modify the selectObject function to accept an object ID
         function selectObject(objectId) {
             // Find the corresponding mesh by ID
             let selectedMesh = scene.getMeshByUniqueID(objectId);
 
             if (selectedMesh) {
-                HeadMesh=selectedMesh;
+                HeadMesh = selectedMesh;
                 // Add your gizmo and shadow generation logic here
                 gizmoManager.attachToMesh(selectedMesh);
                 selectedMesh.receiveShadows = true;

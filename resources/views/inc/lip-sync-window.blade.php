@@ -130,7 +130,6 @@
                     });
 
                     //  const normalizedKeyframes = normalizeKeyframes(morphTargetKeys);
-
                     morphTargetAnimation.setKeys(morphTargetKeys);
                     viseme.animations.push(morphTargetAnimation);
                     animationGroup.addTargetedAnimation(morphTargetAnimation, viseme);
@@ -371,6 +370,8 @@
 
                         document.addEventListener('playAnim', () => {
                             MasteranimationGroup.play();
+                            console.log(MasteranimationGroup);
+                            console.log(selectedMesh);
                             console.log('start event triggered on platform');
                         });
 

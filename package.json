@@ -26,7 +26,7 @@
         "@amazon-sumerian-hosts/babylon": "^2.0.6",
         "babylonjs": "^6.19.1",
         "babylonjs-serializers": "^6.19.1",
-        "three": "^0.156.0",
+        "three": "^0.156.1",
         "wavesurfer.js": "^7.1.5"
     }
 }

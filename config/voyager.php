@@ -212,6 +212,9 @@ return [
         // The allowed mimetypes to be uploaded through the media-manager.
         // 'allowed_mimetypes' => '*', //All types can be uploaded
         'allowed_mimetypes' => [
+          'image/x-webp',
+          'image/WebP',
+          'image/webp',
           'image/jpeg',
           'image/png',
           'image/gif',

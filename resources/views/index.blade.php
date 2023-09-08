@@ -78,6 +78,6 @@
         engine.resize();
     });
 
-  //  scene.debugLayer.show();
+    scene.debugLayer.show();
 </script>
 

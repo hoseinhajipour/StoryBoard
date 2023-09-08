@@ -93,14 +93,15 @@
         // Modify the selectObject function to accept an object ID
         function selectObject(objectId) {
             // Find the corresponding mesh by ID
-            let selectedMesh = scene.getMeshByUniqueID(objectId);
+            let selectedMesh_ = scene.getMeshByUniqueID(objectId);
 
-            if (selectedMesh) {
-                HeadMesh = selectedMesh;
+            if (selectedMesh_) {
+                HeadMesh = selectedMesh_;
+                selectedMesh = selectedMesh_;
                 // Add your gizmo and shadow generation logic here
-                gizmoManager.attachToMesh(selectedMesh);
-                selectedMesh.receiveShadows = true;
-                shadowGenerator.addShadowCaster(selectedMesh, true);
+                gizmoManager.attachToMesh(selectedMesh_);
+                selectedMesh_.receiveShadows = true;
+                shadowGenerator.addShadowCaster(selectedMesh_, true);
                 gizmoManager.positionGizmoEnabled = true;
                 gizmoManager.rotationGizmoEnabled = false;
                 gizmoManager.scaleGizmoEnabled = false;

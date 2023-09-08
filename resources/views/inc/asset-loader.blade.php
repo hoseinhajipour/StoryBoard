@@ -127,11 +127,11 @@
                     var animations = anim.target.animations;
                     animations.forEach(_anim => {
                         new_target.animations.push(_anim);
-                        MasteranimationGroup.addTargetedAnimation(_anim, new_target);
+                        lastGroup.addTargetedAnimation(_anim, new_target);
                     })
                 }
             });
-            lastGroup.dispose();
+        //    lastGroup.dispose();
             meshes.forEach(mesh => {
                 mesh.dispose();
             });

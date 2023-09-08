@@ -21,24 +21,41 @@
         let playing = false;
         let playInterval;
         var MasteranimationGroup = new BABYLON.AnimationGroup("master");
-
+        var frame = 0;
+        var maxframe = 0;
 
         // Function to start or stop the timeline playback
         function togglePlay() {
+            var animationGroups = scene.animationGroups;
             if (playing) {
                 playButton.textContent = 'Play';
                 playing = false;
-                MasteranimationGroup.stop();
+                animationGroups.forEach(group => {
+                    group.stop();
+                });
+                if (window.interval) {
+                    clearInterval(window.interval);
+                }
             } else {
                 playButton.textContent = 'Pause';
                 playing = true;
 
-                MasteranimationGroup.play();
-                MasteranimationGroup.goToFrame(slider.value);
 
-                slider.max = MasteranimationGroup.animatables[0].toFrame;
+                animationGroups.forEach(group => {
+                    group.play();
+                    if (group.animatables[0] && group.animatables[0].toFrame > maxframe) {
+                        maxframe = group.animatables[0].toFrame;
+                        group.goToFrame(slider.value);
+                    }
+                    // animationGroups.goToFrame(slider.value);
+                })
+                //  MasteranimationGroup.play();
+                //   MasteranimationGroup.goToFrame(slider.value);
+
+                slider.max = maxframe / frameRate;
+
                 $("#current_frame").html(slider.value);
-                $("#total_frames").html(slider.max / frameRate);
+                $("#total_frames").html(slider.max);
                 // clear old interval in case playground is run more than once
                 if (window.interval) {
                     clearInterval(window.interval);
@@ -46,18 +63,34 @@
 
                 // log frame every 500 ms
                 window.interval = setInterval(() => {
+                    frame++;
+                    if (frame >= (maxframe / frameRate)) {
+                        frame = 0;
+                        animationGroups.forEach(group => {
+                            group.stop();
+                            group.play();
+                        })
+                        console.log("looping");
+                    }
+                    slider.value = frame;
+                    $("#current_frame").html(frame);
+
+                    /*
                     if (MasteranimationGroup.animatables[0]) {
                         slider.value = MasteranimationGroup.animatables[0].masterFrame;
-                        $("#current_frame").html(slider.value/ frameRate);
-                    }
-
+                        $("#current_frame").html(slider.value / frameRate);
+                    }*/
                 }, 500);
             }
         }
 
         function updateFrame() {
-            MasteranimationGroup.goToFrame(slider.value);
-
+            var animationGroups = scene.animationGroups;
+            animationGroups.forEach(group => {
+                if (group.animatables[0] && group.animatables[0].toFrame > maxframe) {
+                    group.goToFrame(slider.value);
+                }
+            })
         }
 
         let startTime = null;

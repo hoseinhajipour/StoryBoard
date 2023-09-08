@@ -39,9 +39,11 @@
     <script src="{{asset("js/lib/babylonjs.loaders.min.js")}}"></script>
     <script src="{{asset("js/lib/babylon.inspector.bundle.js")}}"></script>
     <script src="{{asset("js/lib/babylon.viewer.js")}}"></script>
+    <script src="{{asset("js/lib/babylonjs.materials.js")}}"></script>
     <script src="{{asset("js/lib/babylon.gui.min.js")}}"></script>
     <script src="{{asset("js/lib/babylonjs.serializers.min.js")}}"></script>
     <script src="{{asset("js/lib/babylonjs.postProcess.min.js")}}"></script>
+    <script src="{{asset("js/lib/babylonjs.proceduralTextures.min.js")}}"></script>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>

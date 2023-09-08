@@ -22,15 +22,12 @@ const createScene = function () {
     gizmoManager = new BABYLON.GizmoManager(scene);
     shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
-
-
     // Skybox
-    var box = BABYLON.Mesh.CreateBox('SkyBox', 1000, scene, false, BABYLON.Mesh.BACKSIDE);
+    var box = BABYLON.Mesh.CreateBox('SkyBox', 2048, scene, false, BABYLON.Mesh.BACKSIDE);
     box.material = new BABYLON.SkyMaterial('sky', scene);
     box.material.inclination = -0.35;
-
     // Reflection probe
-    var rp = new BABYLON.ReflectionProbe('ref', 512, scene);
+    var rp = new BABYLON.ReflectionProbe('ref', 1024, scene);
     rp.renderList.push(box);
 
     // Create SSAO and configure all properties (for the example)

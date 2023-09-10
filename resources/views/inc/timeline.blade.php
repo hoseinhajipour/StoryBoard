@@ -1,8 +1,3 @@
-@push('head')
-    <script src="{{asset('js/timeline/timeline.js')}}"></script>
-    <link rel="stylesheet" href="{{asset('css/timeline.css')}}">
-@endpush
-
 <div class="w-100">
     <button class="btn btn-primary" id="play-button">Play</button>
     <label id="frameView">
@@ -10,16 +5,16 @@
     </label>
     <div class="d-none">
 
-
         <div class="timeline-container">
-
             <input type="range" class="form-control" value="0"
                    onchange="updateFrame()"
                    id="timeline-slider" min="0" max="100" step="1">
 
         </div>
     </div>
-    <div id="mytimeline"></div>
+    <div id="mytimeline">
+
+    </div>
 </div>
 
 @push('script')
@@ -129,102 +124,39 @@
         playButton.addEventListener('click', togglePlay);
     </script>
 
+    <script>
 
-    <script type="text/javascript">
+        var isPlaying = false;
+        var intervalId = null;
+        var millisecondsPerFrame = 1; // Adjust this as needed
 
-        var timeline;
-        var data;
-
-        // Called when the Visualization API is loaded.
-        function drawVisualization() {
-            // Create a JSON data table
-            data = [
-                {
-                    'start': 0,
-                    'end': 10,
-                    'content': 'Walk',
-                    'editable': true
-                },
-                {
-                    'start': 5,
-                    'end': 15,
-                    'content': 'run',
-                    'editable': true
-                }
-            ];
-
-            // specify options
-            var options = {
-                'width': '100%',
-                'height': '30vh',
-                'showCustomTime': true
-            };
-
-            // Instantiate our timeline object.
-            timeline = new links.Timeline(document.getElementById('mytimeline'), options);
-
-            // cancel any running animation as soon as the user changes the range
-            links.events.addListener(timeline, 'rangechange', function (properties) {
-                animateCancel();
-            });
-
-            // Draw our timeline with the created data and options
-            timeline.draw(data);
-
-            timeline.setVisibleChartRange(0, 2);
-        }
-
-        drawVisualization();
-        // create a simple animation
-        var animateTimeout = undefined;
-        var animateFinal = undefined;
-
-        function animateTo(date) {
-            // get the new final date
-            animateFinal = date.valueOf();
-            timeline.setCustomTime(date);
-
-            // cancel any running animation
-            animateCancel();
-
-            // animate towards the final date
-            var animate = function () {
-                var range = timeline.getVisibleChartRange();
-                var current = (range.start.getTime() + range.end.getTime()) / 2;
-                var width = (range.end.getTime() - range.start.getTime());
-                var minDiff = Math.max(width / 1000, 1);
-                var diff = (animateFinal - current);
-                if (Math.abs(diff) > minDiff) {
-                    // move towards the final date
-                    var start = new Date(range.start.getTime() + diff / 4);
-                    var end = new Date(range.end.getTime() + diff / 4);
-                    timeline.setVisibleChartRange(start, end);
-
-                    // start next timer
-                    animateTimeout = setTimeout(animate, 50);
-                }
-            };
-            animate();
-        }
-
-        function animateCancel() {
-            if (animateTimeout) {
-                clearTimeout(animateTimeout);
-                animateTimeout = undefined;
-            }
-        }
-
-        function go() {
-            // interpret the value as a date formatted as "yyyy-MM-dd"
-            var v = document.getElementById('animateDate').value.split('-');
-            var date = new Date(v[0], v[1], v[2]);
-            if (date.toString() == "Invalid Date") {
-                alert("Invalid Date");
+        playButton.addEventListener('click', function () {
+            if (isPlaying) {
+                // Stop the animation
+                clearInterval(intervalId);
+                isPlaying = false;
             } else {
-                animateTo(date);
+                // Start the animation
+                intervalId = setInterval(function () {
+                    // Get the current custom time marker position
+                    var customTime = timeline.getCustomTime(id);
+
+                    // Calculate the new time by adding a small time increment
+                    var newTime = new Date(customTime.getTime() + 100);
+
+                    // Update the custom time marker's position
+                    timeline.setCustomTime(newTime, id);
+
+                    // Check if we have reached the end time, and stop the animation if necessary
+                    if (newTime >= options.end) {
+                        clearInterval(intervalId);
+                        isPlaying = false;
+                    }
+                }, millisecondsPerFrame);
+
+                isPlaying = true;
             }
-        }
-
-
+        });
     </script>
+
 @endpush

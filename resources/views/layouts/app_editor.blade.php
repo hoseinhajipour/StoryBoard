@@ -47,7 +47,7 @@
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-
+    <link rel="stylesheet" href="{{asset('css/jq.Schedule_style.css')}}">
     @yield('head')
     @stack('head')
 </head>
@@ -60,13 +60,14 @@
 <livewire:scripts/>
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
-<!-- Include jQuery UI -->
-
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script src="{{ asset('js/Init.js') }}"></script>
 <script src="{{ asset('js/MainMenu.js') }}"></script>
 
+<script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+<link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+<script src="{{ asset('js/timeline/timeline.js') }}"></script>
 @yield('script')
 @stack('script')
 </body>

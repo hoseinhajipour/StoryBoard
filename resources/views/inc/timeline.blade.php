@@ -1,19 +1,18 @@
-<div class="w-100">
-    <button class="btn btn-primary" id="play-button">Play</button>
-    <label id="frameView">
-        <span id="current_frame">0</span><span>/</span><span id="total_frames">100</span>
-    </label>
-    <div class="d-none">
+<div class="w-100 ">
 
+    <div class="d-none">
+        <button class="btn btn-primary" id="play-button">Play</button>
+        <label id="frameView">
+            <span id="current_frame">0</span><span>/</span><span id="total_frames">100</span>
+        </label>
+
+        <div id="test"></div>
         <div class="timeline-container">
             <input type="range" class="form-control" value="0"
                    onchange="updateFrame()"
                    id="timeline-slider" min="0" max="100" step="1">
 
         </div>
-    </div>
-    <div id="mytimeline">
-
     </div>
 </div>
 
@@ -125,38 +124,29 @@
     </script>
 
     <script>
+        var character = document.getElementById("test");
 
-        var isPlaying = false;
-        var intervalId = null;
-        var millisecondsPerFrame = 1; // Adjust this as needed
 
-        playButton.addEventListener('click', function () {
-            if (isPlaying) {
-                // Stop the animation
-                clearInterval(intervalId);
-                isPlaying = false;
-            } else {
-                // Start the animation
-                intervalId = setInterval(function () {
-                    // Get the current custom time marker position
-                    var customTime = timeline.getCustomTime(id);
+        var chracter_type_anim = {
+            Transform: [0, 1, 0],
+            Viseme: 0,
+            Expression: "happy",
+            sound: {"name": "walk"},
+            MotionLayer: {"name": "walk"}
+        };
+        anim("Character 01").to(chracter_type_anim, 0).to(chracter_type_anim, 2)
+            .onStart(function () {
+                console.log('go!');
+            })
+            .onUpdate(function () {
+                console.log('animating!');
+            })
+            .onEnd(function () {
+                console.log('done!');
+            });
 
-                    // Calculate the new time by adding a small time increment
-                    var newTime = new Date(customTime.getTime() + 100);
 
-                    // Update the custom time marker's position
-                    timeline.setCustomTime(newTime, id);
-
-                    // Check if we have reached the end time, and stop the animation if necessary
-                    if (newTime >= options.end) {
-                        clearInterval(intervalId);
-                        isPlaying = false;
-                    }
-                }, millisecondsPerFrame);
-
-                isPlaying = true;
-            }
-        });
+        Timeline.getGlobalInstance().stop(); //loop forever
     </script>
 
 @endpush

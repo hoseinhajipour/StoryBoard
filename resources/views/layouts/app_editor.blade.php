@@ -21,7 +21,7 @@
 
         #renderCanvas {
             width: 100%;
-            height: 80vh;
+            height: 60vh;
             touch-action: none;
         }
 
@@ -46,6 +46,10 @@
     <script src="{{asset("js/lib/babylonjs.proceduralTextures.min.js")}}"></script>
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+    @yield('head')
+    @stack('head')
 </head>
 <body>
 <livewire:inc.menu/>

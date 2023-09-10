@@ -118,7 +118,14 @@
                         item.classList.remove("ObjectSelect");
                     }
                 }
+
+
+
+
             }
+
+            HighlightLayer.removeAllMeshes();
+            HighlightLayer.addMesh(selectedMesh, BABYLON.Color3.Yellow());
         }
 
 

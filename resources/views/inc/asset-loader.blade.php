@@ -159,7 +159,6 @@
             gizmoManager.rotationGizmoEnabled = false;
             gizmoManager.scaleGizmoEnabled = false;
 
-
             updateObjectNamesFromScene();
         });
     }

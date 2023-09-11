@@ -47,7 +47,8 @@
 
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet" />
+    <script src="{{asset("animation-timeline-control/lib/animation-timeline.js")}}"></script>
     @yield('head')
     @stack('head')
 </head>

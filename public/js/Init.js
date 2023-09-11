@@ -8,9 +8,10 @@ var selectedMesh = null;
 var objectNames = [];
 var Maincamera;
 var frameRate = 30;
+var HighlightLayer;
 const createScene = function () {
     const scene = new BABYLON.Scene(engine);
-    Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 5, new BABYLON.Vector3(0, 0, 0), scene);
+    Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 1, new BABYLON.Vector3(0, 0, 0), scene);
     Maincamera.setPosition(new BABYLON.Vector3(0, 1.5, 2));
     Maincamera.minZ=0.001;
     Maincamera.setTarget(new BABYLON.Vector3(0, 1.5, 0));
@@ -46,6 +47,15 @@ const createScene = function () {
     // Attach camera to the SSAO render pipeline
     scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", Maincamera);
 
+
+    HighlightLayer = new BABYLON.HighlightLayer("hl1", scene, {
+        mainTextureRatio: 1,
+        mainTextureFixedSize: 2048,
+        blurTextureSizeRatio: 1,
+        blurVerticalSize: 2,
+        blurHorizontalSize: 2,
+        threshold: .025,
+    });
     return scene;
 };
 

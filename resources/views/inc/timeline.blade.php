@@ -1,16 +1,19 @@
-<div class="w-100">
-    <button class="btn btn-primary" id="play-button">Play</button>
-    <label id="frameView">
-        <span id="current_frame">0</span><span>/</span><span id="total_frames">100</span>
-    </label>
-    <div class="timeline-container">
+<div class="w-100 ">
 
-        <input type="range" class="form-control" value="0"
-               onchange="updateFrame()"
-               id="timeline-slider" min="0" max="100" step="1">
+    <div class="d-none">
+        <button class="btn btn-primary" id="play-button">Play</button>
+        <label id="frameView">
+            <span id="current_frame">0</span><span>/</span><span id="total_frames">100</span>
+        </label>
 
+        <div id="test"></div>
+        <div class="timeline-container">
+            <input type="range" class="form-control" value="0"
+                   onchange="updateFrame()"
+                   id="timeline-slider" min="0" max="100" step="1">
+
+        </div>
     </div>
-
 </div>
 
 @push('script')
@@ -22,7 +25,7 @@
         let playInterval;
         var MasteranimationGroup = new BABYLON.AnimationGroup("master");
         var frame = 0;
-        var maxframe = 0;
+        var maxframe = 100;
 
         // Function to start or stop the timeline playback
         function togglePlay() {
@@ -119,34 +122,31 @@
         // Event listener for the play button
         playButton.addEventListener('click', togglePlay);
     </script>
+
+    <script>
+        var character = document.getElementById("test");
+
+
+        var chracter_type_anim = {
+            Transform: [0, 1, 0],
+            Viseme: 0,
+            Expression: "happy",
+            sound: {"name": "walk"},
+            MotionLayer: {"name": "walk"}
+        };
+        anim("Character 01").to(chracter_type_anim, 0).to(chracter_type_anim, 2)
+            .onStart(function () {
+                console.log('go!');
+            })
+            .onUpdate(function () {
+                console.log('animating!');
+            })
+            .onEnd(function () {
+                console.log('done!');
+            });
+
+
+        Timeline.getGlobalInstance().stop(); //loop forever
+    </script>
+
 @endpush
-<!--
-<script type="module">
-
-    import {Timeliner} from './timeliner/src/timeliner.js'
-
-    var target = {
-        x: 0,
-        y: 0,
-        rotate: 0
-    };
-
-    // initialize timeliner
-    var timeliner = new Timeliner(target);
-
-
-    timeliner.load({
-        "version": "animator",
-        "modified": "Mon Dec 08 2014 10:41:11 GMT+0800 (SGT)",
-        "title": "Untitled",
-        "layers": []
-    });
-    function animate() {
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-
-</script>
-==>

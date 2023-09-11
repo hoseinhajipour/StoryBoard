@@ -131,10 +131,13 @@
                     })
                 }
             });
-        //    lastGroup.dispose();
+            //    lastGroup.dispose();
+
             meshes.forEach(mesh => {
                 mesh.dispose();
             });
+
+
             updateObjectNamesFromScene();
         });
 

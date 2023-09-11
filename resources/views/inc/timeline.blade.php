@@ -1,195 +1,4 @@
 <div class="w-100 ">
-    <style>
-        .app-container {
-            background-color: #1e1e1e;
-            scrollbar-color: gray #161616;
-            color: #adadad;
-            font-size: 12px;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #timeline {
-            box-sizing: border-box;
-            flex-grow: 8;
-            width: 100%;
-            height: 100%;
-            scrollbar-color: gray #161616;
-        }
-
-        ::-webkit-scrollbar {
-            background: #161616;
-            color: gray;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: gray;
-        }
-
-        ::-webkit-scrollbar-corner {
-            background: #161616;
-        }
-
-        main {
-            display: grid;
-            /*grid-template-columns: ;*/
-            height: 100%;
-            width: 100%;
-        }
-
-        .button {
-            padding: 0px;
-            width: 44px;
-            min-width: 44px;
-            margin-right: 5px;
-            color: #adadad;
-            background: transparent;
-            border: none;
-        }
-
-        .button:focus {
-            outline: 0;
-            border: none;
-        }
-
-        .button:hover {
-            background: #201616;
-        }
-
-        .button:focus {
-            border: none;
-        }
-
-        main {
-            flex-grow: 4;
-            height: 0px;
-            display: grid;
-            grid-template-rows: auto minmax(0, 1fr) auto;
-        }
-
-        footer {
-            display: flex;
-            height: 45%;
-            max-height: 70%;
-        }
-
-        .toolbar {
-            background-color: #383838;
-            padding-left: 44px;
-            max-height: 36px;
-            height: 36px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            height: 36px;
-            background-color: #3c3c3c;
-        }
-
-        .outline-header {
-            height: 30px;
-        }
-
-        .outline-scroll-container {
-            overflow: hidden;
-        }
-
-        .outline-node {
-            padding-left: 20px;
-            font-size: 12px !important;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            font-family: Roboto, 'Helvetica Neue', sans-serif;
-            color: white;
-            user-select: none;
-            height: 30px;
-        }
-
-        .outline-node:hover {
-            background-color: #3399ff;
-        }
-
-        .links {
-            display: flex;
-            align-items: center;
-        }
-
-        a {
-            font-family: Roboto, 'Helvetica Neue', sans-serif;
-            color: white;
-            margin-right: 30px;
-        }
-
-        .logs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            height: 100%;
-        }
-
-        .output {
-            height: 100%;
-            width: 100%;
-        }
-
-        .outline {
-            width: 250px;
-            min-width: 150px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            align-items: stretch;
-            align-content: stretch;
-        }
-
-        .content {
-            overflow: scroll;
-        }
-    </style>
-
-    <div class="toolbar">
-        <button class="button mat-icon material-icons mat-icon-no-color" title="Timeline selection mode"
-                onclick="selectMode()">tab_unselected</button>
-        <button class="button mat-icon material-icons mat-icon-no-color"
-                title="Timeline pan mode with the keyframe selection." onclick="panMode(true)">pan_tool_alt</button>
-        <button class="button mat-icon material-icons mat-icon-no-color" title="Timeline pan mode non interactive"
-                onclick="panMode(false)">pan_tool</button>
-        <button class="button mat-icon material-icons mat-icon-no-color"
-                title="Timeline zoom mode. Also ctrl + scroll can be used." onclick="zoomMode()">search</button>
-        <button class="button mat-icon material-icons mat-icon-no-color" title="Only view mode."
-                onclick="noneMode()">visibility</button>
-        <div style="width: 1px; background: gray; height: 100%"></div>
-        <button class="button mat-icon material-icons mat-icon-no-color"
-                title="Use external player to play\stop the timeline. For the demo simple setInterval is used."
-                onclick="onPlayClick()">
-            play_arrow
-        </button>
-        <button class="button mat-icon material-icons mat-icon-no-color"
-                title="Use external player to play\stop the timeline. For the demo simple setInterval is used."
-                onclick="onPauseClick()">
-            pause
-        </button>
-        <div style="flex: 1"></div>
-        <button class="flex-left button mat-icon material-icons mat-icon-no-color" title="Remove selected keyframe"
-                onclick="removeKeyframe()">close</button>
-        <button class="flex-left button mat-icon material-icons mat-icon-no-color" title="Add new track with the keyframe"
-                onclick="addKeyframe()">add</button>
-        <div class="links">
-            <a class="git-hub-link" href="https://github.com/ievgennaida/animation-timeline-control">GitHub</a>
-        </div>
-    </div>
-    <footer>
-        <div class="outline">
-            <div class="outline-header" id="outline-header"></div>
-            <div class="outline-scroll-container" id="outline-scroll-container" onwheel="outlineMouseWheel(arguments[0])">
-                <div class="outline-items" id="outline-container"></div>
-            </div>
-        </div>
-        <div id="timeline"></div>
-    </footer>
-
 
 </div>
 
@@ -214,172 +23,7 @@
             };
             let rows = [
                 {
-                    selected: false,
-                    draggable: false,
-
-                    keyframes: [
-                        {
-                            val: 40,
-                            shape: 'rhomb',
-                        },
-                        {
-                            shape: 'rhomb',
-                            val: 3000,
-                            selected: false,
-                        },
-                    ],
-                },
-                {
-                    selected: false,
-                    keyframes: [
-                        {
-                            style:{
-                                cursor: 'default',
-                            },
-                            val: 2000,
-                        },
-                        {
-                            val: 2500,
-                        },
-                        {
-                            val: 2600,
-                        },
-                    ],
-                },
-                {
-                    keyframes: [
-                        {
-                            val: 1000,
-                        },
-                        {
-                            val: 1500,
-                        },
-                        {
-                            val: 2000,
-                        },
-                    ],
-                },
-                {
-                    title: 'Groups (Limited)',
-                    keyframes: [
-                        {
-                            val: 40,
-                            max: 850,
-                            group: 'a',
-                        },
-                        {
-                            val: 800,
-                            max: 900,
-                            group: 'a',
-                        },
-                        {
-                            min: 1000,
-                            max: 3400,
-                            val: 1900,
-                            group: 'b',
-                        },
-                        {
-                            val: 3000,
-                            max: 3500,
-                            group: 'b',
-                        },
-                        {
-                            min: 3500,
-                            val: 4000,
-                            group: 'c',
-                        },
-                    ],
-                },
-                {
-                    title: 'Groups Different Styles',
-                    keyframes: [
-                        {
-                            val: 100,
-                            max: 850,
-                            group: groupA,
-                        },
-                        {
-                            val: 500,
-                            max: 900,
-                            group: groupA,
-                        },
-                        {
-                            min: 900,
-                            max: 3400,
-                            val: 1900,
-                            group: groupB,
-                        },
-                        {
-                            val: 4000,
-                            group: groupB,
-                        },
-                    ],
-                },
-                {
-                    keyframes: [
-                        {
-                            val: 100,
-                        },
-                        {
-                            val: 3410,
-                        },
-                        {
-                            val: 2000,
-                        },
-                    ],
-                },
-                {
-                    title: 'Keyframe Style Customized',
-                    style: {
-                        groupsStyle: {
-                            height: 5,
-                            marginTop: "auto"
-                        },
-                        keyframesStyle: {
-                            shape: 'rect',
-                            width: 5,
-                            height: 20,
-                        }
-                    },
-                    keyframes: [
-                        {
-                            val: 90,
-                        },
-                        {
-                            val: 3000,
-                        },
-                    ],
-                },
-                {},
-                {
-                    title: 'Max Value (Not Draggable)',
-                    max: 4000,
-                    keyframes: [
-                        {
-                            style: {
-                                width: 4,
-                                height: 20,
-                                group: 'block',
-                                shape: 'rect',
-                                fillColor: 'Red',
-                                strokeColor: 'Black',
-                            },
-                            val: 4000,
-                            selectable: false,
-                            draggable: false,
-                        },
-                        {
-                            val: 1500,
-                        },
-                        {
-                            val: 2500,
-                        },
-                    ],
-                },
-                {},
-                {},
-                {
-                    title: 'Custom Height',
+                    title: 'Character 01',
                     style: {
                         height: 100,
                         keyframesStyle: {
@@ -392,7 +36,6 @@
                     keyframes: [
                         {
                             val: 40,
-                            max: 850,
                             group: 'a',
                         },
                         {
@@ -416,18 +59,7 @@
                 args.preventDefault();
             }
         });
-        var logMessage = function (message, logPanel = 1) {
-            if (message) {
-                let el = document.getElementById('output' + logPanel);
-                el.innerHTML = message + '<br/>' + el.innerHTML;
-            }
-        };
 
-        var logDraggingMessage = function (object, eventName) {
-            if (object.elements) {
-                logMessage('Keyframe value: ' + object.elements[0].val + '. Selected (' + object.elements.length + ').' + eventName);
-            }
-        };
 
         timeline.onTimeChanged(function (event) {
             showActivePositionInformation();
@@ -446,13 +78,13 @@
             }
         }
         timeline.onSelected(function (obj) {
-            logMessage('Selected Event: (' + obj.selected.length + '). changed selection :' + obj.changed.length, 2);
+         //   logMessage('Selected Event: (' + obj.selected.length + '). changed selection :' + obj.changed.length, 2);
         });
         timeline.onDragStarted(function (obj) {
-            logDraggingMessage(obj, 'dragstarted');
+          //  logDraggingMessage(obj, 'dragstarted');
         });
         timeline.onDrag(function (obj) {
-            logDraggingMessage(obj, 'drag');
+          //  logDraggingMessage(obj, 'drag');
         });
         timeline.onKeyframeChanged(function (obj) {
             console.log('keyframe: ' + obj.val);
@@ -462,11 +94,11 @@
         });
         timeline.onMouseDown(function (obj) {
             var type = obj.target ? obj.target.type : '';
-            logMessage('mousedown:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
+          //  logMessage('mousedown:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
         });
         timeline.onDoubleClick(function (obj) {
             var type = obj.target ? obj.target.type : '';
-            logMessage('doubleclick:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
+         //   logMessage('doubleclick:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
         });
 
         timeline.onScroll(function (obj) {
@@ -482,7 +114,7 @@
         });
         timeline.onScrollFinished(function (obj) {
             // Stop move component screen to the timeline when user start manually scrolling.
-            logMessage('on scroll finished', 2);
+           // logMessage('on scroll finished', 2);
         });
         generateHTMLOutlineListNodes(rows);
 
@@ -571,12 +203,22 @@
                 this.moveTimelineIntoTheBounds();
                 // Don't allow to manipulate timeline during playing (optional).
                 timeline.setOptions({ timelineDraggable: false });
+
+                var animationGroups = scene.animationGroups;
+
+                animationGroups.forEach(group => {
+                    group.play();
+                })
             }
         }
         function onPauseClick(event) {
             playing = false;
             if (timeline) {
                 timeline.setOptions({ timelineDraggable: true });
+                var animationGroups = scene.animationGroups;
+                animationGroups.forEach(group => {
+                    group.stop();
+                });
             }
         }
 

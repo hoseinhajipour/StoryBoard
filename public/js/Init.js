@@ -71,6 +71,7 @@ window.addEventListener("resize", function () {
 });
 
 //scene.debugLayer.show();
+//scene.debugLayer.show({ embedMode: true });
 document.addEventListener("keydown", function (event) {
     // Check the key code and toggle gizmos accordingly
 

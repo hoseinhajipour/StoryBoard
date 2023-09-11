@@ -66,10 +66,6 @@
 <script src="{{ asset('js/Init.js') }}"></script>
 <script src="{{ asset('js/MainMenu.js') }}"></script>
 
-<script type="text/javascript" src="{{ asset('timeline.js/src/timeline.js') }}"></script>
-<script type="text/javascript" src="{{ asset('timeline.js/src/timeline-gui.js') }}"></script>
-<script type="text/javascript" src="{{ asset('timeline.js/src/RequestAnimationFrame.js') }}"></script>
-
 @yield('script')
 @stack('script')
 </body>

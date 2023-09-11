@@ -49,6 +49,12 @@
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet" />
     <script src="{{asset("animation-timeline-control/lib/animation-timeline.js")}}"></script>
+
+    <!-- Alpine v3 -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Focus plugin -->
+    <script defer src="https://unpkg.com/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
     @yield('head')
     @stack('head')
 </head>
@@ -65,7 +71,7 @@
 
 <script src="{{ asset('js/Init.js') }}"></script>
 <script src="{{ asset('js/MainMenu.js') }}"></script>
-
+@livewire('livewire-ui-modal')
 @yield('script')
 @stack('script')
 </body>

@@ -13,7 +13,11 @@ const createScene = function () {
     const scene = new BABYLON.Scene(engine);
     Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 1, new BABYLON.Vector3(0, 0, 0), scene);
     Maincamera.setPosition(new BABYLON.Vector3(0, 1.5, 2));
-    Maincamera.minZ=0.001;
+    Maincamera.minZ = 0.001;
+    Maincamera.collisionMask = 1; //check to see if needed
+    Maincamera.checkCollisions = true;
+    //   Maincamera.wheelPrecision = 0.001;
+
     Maincamera.setTarget(new BABYLON.Vector3(0, 1.5, 0));
     Maincamera.attachControl(canvas, true);
     const light_0 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
@@ -24,12 +28,15 @@ const createScene = function () {
     shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
     // Skybox
+
     var box = BABYLON.Mesh.CreateBox('SkyBox', 2048, scene, false, BABYLON.Mesh.BACKSIDE);
     box.material = new BABYLON.SkyMaterial('sky', scene);
     box.material.inclination = -0.35;
-    // Reflection probe
+        // Reflection probe
     var rp = new BABYLON.ReflectionProbe('ref', 1024, scene);
     rp.renderList.push(box);
+
+
 
     // Create SSAO and configure all properties (for the example)
     var ssaoRatio = {

@@ -1,5 +1,5 @@
 <div>
-
+    <livewire:modal.upload-asset-modal/>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home"
@@ -68,6 +68,8 @@
             @endforeach
         </div>
     </div>
+
+
 </div>
 <script>
 
@@ -115,7 +117,20 @@
         return null; // Node not found within selectedNode or its children
     }
 
+    function getTotalKeyframesCount(animationGroup) {
+        let totalKeyframesCount = 0;
 
+        // Iterate through the animations in the AnimationGroup
+        for (const animation of animationGroup.targetedAnimations) {
+            if (animation.animation.targetProperty === 'position') {
+                // Assuming 'position' is the property you want to count keyframes for
+                totalKeyframesCount += animation.animation.getKeys().length;
+            }
+            // You can add more conditions for other target properties if needed
+        }
+
+        return totalKeyframesCount;
+    }
     function loadAnimation(asset_url) {
         BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
             var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
@@ -139,6 +154,38 @@
 
 
             updateObjectNamesFromScene();
+
+            // add to timeline
+
+            if (timeline) {
+                // Add keyframe
+                let rows = [
+                    {
+                        title: selectedMesh.name,
+                        style: {
+                            height: 100,
+                            keyframesStyle: {
+                                shape: 'rect',
+                                width: 4,
+                                height: 70,
+                            },
+                        },
+                        keyframes: [
+                            {val: timeline.getTime()},
+                            {val: timeline.getTime() + getTotalKeyframesCount(lastGroup)}
+                        ],
+                    },
+                ];
+
+                // Add keyframe
+                const currentModel = timeline.getModel();
+                currentModel.rows.push(rows[0]);
+                timeline.setModel(currentModel);
+
+                // Generate outline list menu
+                generateHTMLOutlineListNodes(currentModel.rows);
+            }
+
         });
 
     }

@@ -7,50 +7,19 @@
         var outlineContainer = document.getElementById('outline-container');
 
         function generateModel() {
-            const groupA = {
-                style: {
-                    fillColor: '#6B9080',
-                    marginTop: 4,
-                },
-                keyframesStyle: {
-                    shape: "rect"
-                }
-            };
-            const groupB = {
-                style: {
-                    marginTop: 6,
-                },
-            };
             let rows = [
                 {
-                    title: 'Character 01',
-                    style: {
-                        height: 100,
-                        keyframesStyle: {
-                            shape: 'rect',
-                            width: 4,
-                            height: 70,
-                        },
-                    },
-
-                    keyframes: [
-                        {
-                            val: 40,
-                            group: 'a',
-                        },
-                        {
-                            val: 8600,
-                            group: 'a',
-                        },
-                    ],
+                    title: 'Camera',
+                    keyframes: [],
                 },
             ];
             return rows;
         }
+
         const rows = generateModel();
         var timeline = new timelineModule.Timeline();
-        timeline.initialize({ id: 'timeline', headerHeight: 45 });
-        timeline.setModel({ rows: rows });
+        timeline.initialize({id: 'timeline', headerHeight: 45});
+        timeline.setModel({rows: rows});
 
         // Select all elements on key down
         document.addEventListener('keydown', function (args) {
@@ -64,6 +33,7 @@
         timeline.onTimeChanged(function (event) {
             showActivePositionInformation();
         });
+
         function showActivePositionInformation() {
             if (timeline) {
                 const fromPx = timeline.scrollLeft;
@@ -77,28 +47,29 @@
                 document.getElementById('currentTime').innerHTML = message;
             }
         }
+
         timeline.onSelected(function (obj) {
-         //   logMessage('Selected Event: (' + obj.selected.length + '). changed selection :' + obj.changed.length, 2);
+            //   logMessage('Selected Event: (' + obj.selected.length + '). changed selection :' + obj.changed.length, 2);
         });
         timeline.onDragStarted(function (obj) {
-          //  logDraggingMessage(obj, 'dragstarted');
+            //  logDraggingMessage(obj, 'dragstarted');
         });
         timeline.onDrag(function (obj) {
-          //  logDraggingMessage(obj, 'drag');
+            //  logDraggingMessage(obj, 'drag');
         });
         timeline.onKeyframeChanged(function (obj) {
             console.log('keyframe: ' + obj.val);
         });
         timeline.onDragFinished(function (obj) {
-            logDraggingMessage(obj, 'dragfinished');
+            //  logDraggingMessage(obj, 'dragfinished');
         });
         timeline.onMouseDown(function (obj) {
             var type = obj.target ? obj.target.type : '';
-          //  logMessage('mousedown:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
+            //  logMessage('mousedown:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
         });
         timeline.onDoubleClick(function (obj) {
             var type = obj.target ? obj.target.type : '';
-         //   logMessage('doubleclick:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
+            //   logMessage('doubleclick:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);
         });
 
         timeline.onScroll(function (obj) {
@@ -114,7 +85,7 @@
         });
         timeline.onScrollFinished(function (obj) {
             // Stop move component screen to the timeline when user start manually scrolling.
-           // logMessage('on scroll finished', 2);
+            // logMessage('on scroll finished', 2);
         });
         generateHTMLOutlineListNodes(rows);
 
@@ -144,11 +115,13 @@
                 timeline.setInteractionMode('selector');
             }
         }
+
         function zoomMode() {
             if (timeline) {
                 timeline.setInteractionMode('zoom');
             }
         }
+
         function noneMode() {
             if (timeline) {
                 timeline.setInteractionMode('none');
@@ -170,51 +143,59 @@
                 timeline.setModel(currentModel);
             }
         }
+
         function addKeyframe() {
             if (timeline) {
                 // Add keyframe
                 const currentModel = timeline.getModel();
-                currentModel.rows.push({ keyframes: [{ val: timeline.getTime() }] });
+                currentModel.rows.push({keyframes: [{val: timeline.getTime()}]});
                 timeline.setModel(currentModel);
 
                 // Generate outline list menu
                 generateHTMLOutlineListNodes(currentModel.rows);
             }
         }
+
         function panMode(interactive) {
             if (timeline) {
                 timeline.setInteractionMode(interactive ? 'pan' : 'nonInteractivePan');
             }
         }
+
         // Set scroll back to timeline when mouse scroll over the outline
         function outlineMouseWheel(event) {
             if (timeline) {
                 this.timeline._handleWheelEvent(event);
             }
         }
+
         playing = false;
-        playStep = 50;
+        playStep = 100;
         // Automatic tracking should be turned off when user interaction happened.
         trackTimelineMovement = false;
+
         function onPlayClick(event) {
             playing = true;
             trackTimelineMovement = true;
             if (timeline) {
                 this.moveTimelineIntoTheBounds();
                 // Don't allow to manipulate timeline during playing (optional).
-                timeline.setOptions({ timelineDraggable: false });
+
+                timeline.setOptions({timelineDraggable: false});
 
                 var animationGroups = scene.animationGroups;
 
                 animationGroups.forEach(group => {
+                    group.stop();
                     group.play();
                 })
             }
         }
+
         function onPauseClick(event) {
             playing = false;
             if (timeline) {
-                timeline.setOptions({ timelineDraggable: true });
+                timeline.setOptions({timelineDraggable: true});
                 var animationGroups = scene.animationGroups;
                 animationGroups.forEach(group => {
                     group.stop();
@@ -238,6 +219,7 @@
                 }
             }
         }
+
         function initPlayer() {
             setInterval(() => {
                 if (playing) {
@@ -248,6 +230,7 @@
                 }
             }, playStep);
         }
+
         // Note: this can be any other player: audio, video, svg and etc.
         // In this case you have to synchronize events of the component and player.
         initPlayer();

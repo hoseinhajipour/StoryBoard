@@ -15,7 +15,8 @@
                 </div>
                 <div class="modal-body">
 
-
+                    <label>Title</label>
+                    <input id="lipsync_title" type="text" class="form-control my-3">
                     <label> Zoom: <input type="range" min="10" max="1000" value="100"> </label>
                     <div id="waveform">
                         <!-- the waveform will be rendered here -->
@@ -40,6 +41,7 @@
         <script>
             var HeadMesh;
             var excludeTargets = [];
+            var MasteranimationGroup;
 
             function findMorph(Manager, name) {
                 for (let i = 0; i < Manager.numTargets; i++) {
@@ -50,6 +52,7 @@
                 }
                 return null;
             }
+
             function secondsToFrames(seconds, frameRate) {
                 return Math.round(seconds * frameRate);
             }
@@ -359,6 +362,7 @@
 
                         // excludeTargets = ["eyeBlinkLeft", "eyeBlinkRight"];
 
+                        MasteranimationGroup = new BABYLON.AnimationGroup("Lipsync_" + $("#lipsync_title").val());
 
                         combineKeyFrames(MasteranimationGroup, morphVisemeKeys, audio_duration);
 

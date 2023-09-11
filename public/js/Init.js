@@ -33,7 +33,7 @@ const createScene = function () {
     // Create SSAO and configure all properties (for the example)
     var ssaoRatio = {
         ssaoRatio: 0.5, // Ratio of the SSAO post-process, in a lower resolution
-        combineRatio: 1.0 // Ratio of the combine post-process (combines the SSAO and the scene)
+        combineRatio: 2 // Ratio of the combine post-process (combines the SSAO and the scene)
     };
 
     var ssao = new BABYLON.SSAORenderingPipeline("ssao", scene, ssaoRatio);

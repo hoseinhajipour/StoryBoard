@@ -15,6 +15,7 @@
                         File
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
+                        <a href="#" onclick="SaveScene()" class="dropdown-item">Save</a>
                         <a href="#" onclick="ExportScene()" class="dropdown-item">Export</a>
                     </div>
                 </div>
@@ -48,4 +49,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        var objectUrl;
+        var filename = "test";
+
+        function SaveScene() {
+            BABYLON.Tools.CreateScreenshot(engine, Maincamera, 400, function (imagedata) {
+                console.log(imagedata);
+
+                if (objectUrl) {
+                    window.URL.revokeObjectURL(objectUrl);
+                }
+
+                var serializedScene = BABYLON.SceneSerializer.Serialize(scene);
+                var serializedSceneJson = JSON.stringify(serializedScene);
+                Livewire.emit('SaveProject', serializedSceneJson,imagedata);
+
+            });
+
+
+
+
+        }
+    </script>
 </nav>

@@ -35,15 +35,20 @@
             @endforeach
         </div>
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            @foreach($Characters as $Character)
-                <div class="card shadow"
-                     onclick="loadModel('{{ url('storage/'.str_replace("\\", "/", json_decode($Character->url)[0]->download_link))  }}','{{$Character->title}}' )">
-                    <div class="card-body">
-                        <img src="{{Voyager::image($Character->icon)}}" width="128">
-                        {{$Character->title}}
+            <div class="row">
+                @foreach($Characters as $Character)
+                    <div class="col-4">
+                        <div class="card shadow text-center my-2"
+                             onclick="loadModel('{{ url('storage/'.str_replace("\\", "/", json_decode($Character->url)[0]->download_link))  }}','{{$Character->title}}' )">
+                            <div class="card-body">
+                                <img src="{{Voyager::image($Character->icon)}}" width="100%">
+                                <b>{{$Character->title}}</b>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+
         </div>
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
             @foreach($Animations as $Animation)
@@ -83,10 +88,11 @@
 
             // Copy keyframes from the source animation to the target animation
             for (var j = 0; j < sourceSkeleton.bones.length; j++) {
+                var sourceBone = sourceSkeleton.bones[j];
+                console.log(sourceBone.name);
+                if (sourceBone.name != "RightEye" || sourceBone.name != "LeftEye") {
 
-                if(sourceBone.name != "RightEye" || sourceBone.name != "LeftEye"){
 
-                    var sourceBone = sourceSkeleton.bones[j];
                     var targetBone = targetSkeleton.getBoneByName(sourceBone.name);
 
                     if (targetBone) {
@@ -102,6 +108,8 @@
                             targetAnimationRange.addTargetedAnimation(targetAnimation, targetBone);
                         }
                     }
+
+                } else {
 
                 }
 
@@ -140,6 +148,7 @@
 
         return totalKeyframesCount;
     }
+
     function loadAnimation(asset_url) {
         BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
             var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
@@ -147,14 +156,18 @@
             var animatables = lastGroup._animatables;
             animatables.forEach(anim => {
                 var new_target = findNodeByName(selectedMesh, anim.target.name);
+
                 if (new_target) {
-                    var animations = anim.target.animations;
-                    animations.forEach(_anim => {
-                        new_target.animations.push(_anim);
-                        lastGroup.addTargetedAnimation(_anim, new_target);
-                    })
+                    if (new_target.name !== "RightEye" && new_target.name !== "LeftEye") {
+                        var animations = anim.target.animations;
+                        animations.forEach(_anim => {
+                            new_target.animations.push(_anim);
+                            lastGroup.addTargetedAnimation(_anim, new_target);
+                        })
+                    }
                 }
             });
+
             //    lastGroup.dispose();
 
             meshes.forEach(mesh => {

@@ -9,7 +9,7 @@ var objectNames = [];
 var Maincamera;
 var frameRate = 30;
 var HighlightLayer;
-const createScene = function () {
+const createScene = function (laoadformurl = null) {
     const scene = new BABYLON.Scene(engine);
     Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 1, new BABYLON.Vector3(0, 0, 0), scene);
     Maincamera.setPosition(new BABYLON.Vector3(0, 1.5, 2));
@@ -20,6 +20,10 @@ const createScene = function () {
 
     Maincamera.setTarget(new BABYLON.Vector3(0, 1.5, 0));
     Maincamera.attachControl(canvas, true);
+    this.Maincamera.wheelPrecision = 100;
+    this.Maincamera.zoomToMouseLocation = true;
+
+
     const light_0 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
     light_0.intensity = 0.7;
     const light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -1, 1), scene);
@@ -32,10 +36,9 @@ const createScene = function () {
     var box = BABYLON.Mesh.CreateBox('SkyBox', 2048, scene, false, BABYLON.Mesh.BACKSIDE);
     box.material = new BABYLON.SkyMaterial('sky', scene);
     box.material.inclination = -0.35;
-        // Reflection probe
+    // Reflection probe
     var rp = new BABYLON.ReflectionProbe('ref', 1024, scene);
     rp.renderList.push(box);
-
 
 
     // Create SSAO and configure all properties (for the example)
@@ -63,14 +66,18 @@ const createScene = function () {
         blurHorizontalSize: 2,
         threshold: .025,
     });
+
     return scene;
 };
 
 
-const scene = createScene(); //Call the createScene function
+var scene = createScene(); //Call the createScene function
 // Register a render loop to repeatedly render the scene
 engine.runRenderLoop(function () {
-    scene.render();
+    if (scene) {
+        scene.render();
+    }
+
 });
 // Watch for browser/canvas resize events
 window.addEventListener("resize", function () {
@@ -95,7 +102,10 @@ document.addEventListener("keydown", function (event) {
             Maincamera.setPosition(meshPosition.add(direction.scale(-distance)));
         }
     }
-
+    if (event.keyCode == 46) {
+        selectedMesh.dispose();
+        updateObjectNamesFromScene();
+    }
     switch (event.key) {
         case "e":
             gizmoManager.positionGizmoEnabled = false;

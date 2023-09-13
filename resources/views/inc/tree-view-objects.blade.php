@@ -81,7 +81,6 @@
                 AnimationList.appendChild(anim);
             });
 
-            console.log(scene.skeletons);
         }
 
         function selectAnim(RowID) {

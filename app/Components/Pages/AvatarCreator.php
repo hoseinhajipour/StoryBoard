@@ -12,13 +12,15 @@ class AvatarCreator extends Component
 {
     protected $listeners = ["uploadFile"];
 
-    public function uploadFile($downloadUrl,$title)
+    public $title = "";
+
+    public function uploadFile($downloadUrl)
     {
         if ($downloadUrl) {
             // Save the file path in the database
             $newChar = new Character();
             $newChar->url = $downloadUrl;
-            $newChar->title = x;
+            $newChar->title = $this->title;
             $newChar->user_id = Auth::user()->id;
             $newChar->save();
 

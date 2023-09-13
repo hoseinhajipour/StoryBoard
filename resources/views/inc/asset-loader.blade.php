@@ -83,20 +83,29 @@
 
             // Copy keyframes from the source animation to the target animation
             for (var j = 0; j < sourceSkeleton.bones.length; j++) {
-                var sourceBone = sourceSkeleton.bones[j];
-                var targetBone = targetSkeleton.getBoneByName(sourceBone.name);
 
-                if (targetBone) {
-                    var sourceAnimation = sourceBone.animations[i];
+                if(sourceBone.name != "RightEye" || sourceBone.name != "LeftEye"){
 
-                    if (sourceAnimation) {
-                        // Clone the animation from the source bone to the target bone
-                        var targetAnimation = sourceAnimation.clone();
+                    var sourceBone = sourceSkeleton.bones[j];
+                    var targetBone = targetSkeleton.getBoneByName(sourceBone.name);
 
-                        // Add the cloned animation to the target animation range
-                        targetAnimationRange.addTargetedAnimation(targetAnimation, targetBone);
+                    if (targetBone) {
+
+
+                        var sourceAnimation = sourceBone.animations[i];
+
+                        if (sourceAnimation) {
+                            // Clone the animation from the source bone to the target bone
+                            var targetAnimation = sourceAnimation.clone();
+
+                            // Add the cloned animation to the target animation range
+                            targetAnimationRange.addTargetedAnimation(targetAnimation, targetBone);
+                        }
                     }
+
                 }
+
+
             }
         }
     }

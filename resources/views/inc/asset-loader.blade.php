@@ -154,19 +154,35 @@
             var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
 
             var animatables = lastGroup._animatables;
+            console.log("time frame : " + timeline.getTime() / 60)
             animatables.forEach(anim => {
                 var new_target = findNodeByName(selectedMesh, anim.target.name);
 
                 if (new_target) {
                     if (new_target.name !== "RightEye" && new_target.name !== "LeftEye") {
                         var animations = anim.target.animations;
+
                         animations.forEach(_anim => {
-                            new_target.animations.push(_anim);
-                            lastGroup.addTargetedAnimation(_anim, new_target);
-                        })
+                            // Create a copy of the _anim animation
+                            var modifiedAnim = _anim.clone();
+
+
+                            // Offset the keyframes in the modified animation
+                            modifiedAnim.getKeys().forEach(keyframe => {
+                                // Offset the keyframe as needed
+                                keyframe.frame += timeline.getTime() / 60;
+                            });
+
+                            // Push the modified animation to new_target.animations
+                            new_target.animations.push(modifiedAnim);
+
+                            // Add the modified animation as a targeted animation
+                            lastGroup.addTargetedAnimation(modifiedAnim, new_target);
+                        });
                     }
                 }
             });
+            lastGroup.normalize(0, lastGroup.to);
 
             //    lastGroup.dispose();
 

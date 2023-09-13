@@ -56,12 +56,9 @@
 
         function SaveScene() {
             BABYLON.Tools.CreateScreenshot(engine, Maincamera, 400, function (imagedata) {
-                console.log(imagedata);
-
                 if (objectUrl) {
                     window.URL.revokeObjectURL(objectUrl);
                 }
-
                 var serializedScene = BABYLON.SceneSerializer.Serialize(scene);
                 var serializedSceneJson = JSON.stringify(serializedScene);
                 Livewire.emit('SaveProject', serializedSceneJson,imagedata);

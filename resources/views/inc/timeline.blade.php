@@ -170,7 +170,7 @@
         }
 
         playing = false;
-        playStep = 100;
+        playStep = frameRate;
         // Automatic tracking should be turned off when user interaction happened.
         trackTimelineMovement = false;
 

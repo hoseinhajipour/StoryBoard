@@ -372,6 +372,8 @@
 
                         AllZeroKeyframes(MasteranimationGroup, audio_duration);
 
+
+                        MasteranimationGroup.normalize(0, MasteranimationGroup.to);
                         document.addEventListener('playAnim', () => {
                             MasteranimationGroup.play();
                             console.log(MasteranimationGroup);

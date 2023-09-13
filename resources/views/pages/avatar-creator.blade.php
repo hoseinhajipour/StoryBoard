@@ -1,8 +1,14 @@
 <div>
+    <button onclick="test()">test</button>
     <label id="avatarUrl"></label>
     <iframe id="frame" class="frame" width="100%" height="768" allow="camera *; microphone *; clipboard-write"></iframe>
 
     <script>
+
+        function test() {
+            Livewire.emit('uploadFile', "https://models.readyplayer.me/65018bfae4ea85b9fdf71b29.glb","girl");
+        }
+
         const subdomain = 'demo'; // Replace with your custom subdomain
         const frame = document.getElementById('frame');
 
@@ -35,6 +41,8 @@
                 console.log(`Avatar URL: ${json.data.url}`);
                 document.getElementById('avatarUrl').innerHTML = `Avatar URL: ${json.data.url}`;
                 document.getElementById('frame').hidden = true;
+
+                Livewire.emit('uploadFile', json.data.url,"test");
             }
 
             // Get user id

@@ -21,7 +21,7 @@ const createScene = function (laoadformurl = null) {
     Maincamera.setTarget(new BABYLON.Vector3(0, 1.5, 0));
     Maincamera.attachControl(canvas, true);
     this.Maincamera.wheelPrecision = 100;
-    this.Maincamera.zoomToMouseLocation = true;
+   // this.Maincamera.zoomToMouseLocation = true;
 
 
     const light_0 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
@@ -84,7 +84,7 @@ window.addEventListener("resize", function () {
     engine.resize();
 });
 
-scene.debugLayer.show();
+//scene.debugLayer.show();
 //scene.debugLayer.show({ embedMode: true });
 document.addEventListener("keydown", function (event) {
     // Check the key code and toggle gizmos accordingly

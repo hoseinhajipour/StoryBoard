@@ -41,6 +41,12 @@
                         onclick="onPauseClick()">
                     pause
                 </button>
+
+                <button class="button mat-icon material-icons mat-icon-no-color"
+                        title="Use external player to play\stop the timeline. For the demo simple setInterval is used."
+                        onclick="onStopClick()">
+                    stop
+                </button>
                 <div style="flex: 1"></div>
                 <button class="flex-left button mat-icon material-icons mat-icon-no-color"
                         title="Remove selected keyframe"

@@ -5,6 +5,11 @@
 @push('script')
     <script>
         var outlineContainer = document.getElementById('outline-container');
+        playing = false;
+        playStep = 60;
+        // Automatic tracking should be turned off when user interaction happened.
+        trackTimelineMovement = false;
+        var endFrame = 0;
 
         function generateModel() {
             let rows = [
@@ -30,9 +35,52 @@
         });
 
 
+        var groupStart = false;
         timeline.onTimeChanged(function (event) {
+            var frame = (timeline.getTime() / 1000) * frameRate;
+            if (playing == false) {
+                var animationGroups = scene.animationGroups;
+                animationGroups.forEach(group => {
+
+                    if (groupStart == false) {
+                        group.play();
+
+                        setTimeout(() => {
+                            group.pause();
+                        }, 1);
+                    }
+                    group.goToFrame(frame);
+                });
+            } else {
+                console.log(frame + ">" + endFrame);
+                if (frame >= endFrame) {
+                    console.log("stop");
+                    onStopClick();
+                }
+            }
+
+
             showActivePositionInformation();
         });
+
+        function onStopClick() {
+            timeline.setTime(0);
+            var animationGroups = scene.animationGroups;
+            animationGroups.forEach(group => {
+                //    group.play();
+                group.goToFrame(0);
+
+                setTimeout(() => {
+                    group.stop();
+                }, 100);
+            });
+
+            playing = false;
+            if (timeline) {
+                timeline.setOptions({timelineDraggable: true});
+            }
+
+        }
 
         function showActivePositionInformation() {
             if (timeline) {
@@ -55,12 +103,17 @@
             //  logDraggingMessage(obj, 'dragstarted');
         });
         timeline.onDrag(function (obj) {
+
             //  logDraggingMessage(obj, 'drag');
         });
         timeline.onKeyframeChanged(function (obj) {
-            console.log('keyframe: ' + obj.val);
+            //  console.log('keyframe: ' + obj.val);
         });
         timeline.onDragFinished(function (obj) {
+            console.log(obj.target.row.title);
+            console.log(obj.target.row.offset);
+
+
             //  logDraggingMessage(obj, 'dragfinished');
         });
         timeline.onMouseDown(function (obj) {
@@ -169,10 +222,6 @@
             }
         }
 
-        playing = false;
-        playStep = frameRate;
-        // Automatic tracking should be turned off when user interaction happened.
-        trackTimelineMovement = false;
 
         function onPlayClick(event) {
             playing = true;
@@ -184,11 +233,16 @@
                 timeline.setOptions({timelineDraggable: false});
 
                 var animationGroups = scene.animationGroups;
-
                 animationGroups.forEach(group => {
                     group.stop();
                     group.play();
-                })
+
+                    if (endFrame < group.to) {
+                        endFrame = group.to;
+                    }
+                });
+
+
             }
         }
 
@@ -209,6 +263,7 @@
                     // User is manipulating items, don't move screen in this case.
                     return;
                 }
+
                 const fromPx = timeline.scrollLeft;
                 const toPx = timeline.scrollLeft + timeline.getClientWidth();
 

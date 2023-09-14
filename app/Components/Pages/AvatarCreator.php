@@ -32,7 +32,8 @@ class AvatarCreator extends Component
     public function route()
     {
         return Route::get('/avatar-creator')
-            ->name('AvatarCreator');
+            ->name('AvatarCreator')
+            ->middleware('auth');
     }
 
     public function render()

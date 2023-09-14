@@ -10,6 +10,7 @@ use Livewire\Component;
 class Editor extends Component
 {
     public $project;
+
     public function mount(Request $request)
     {
         if ($request->id) {
@@ -20,7 +21,8 @@ class Editor extends Component
     public function route()
     {
         return Route::get('/editor')
-            ->name('editor');
+            ->name('editor')
+            ->middleware('auth');
     }
 
     public function render()

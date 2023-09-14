@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
+    <div class="container-fluid">
         <a href="{{ route('index') }}" class="navbar-brand">
-            <i class="fa fa-code text-primary"></i> {{ config('app.name') }}
+            <i class="fa fa-code text-primary"></i> {{setting('site.title') }}
         </a>
 
         <button type="button" data-bs-toggle="collapse" data-bs-target="#nav" class="navbar-toggler">
@@ -43,7 +43,7 @@
                         Render
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="#" class="dropdown-item"></a>
+                        <a href="#" onclick="RenderMovie()" class="dropdown-item">Render As Webm</a>
                     </div>
                 </div>
             </div>
@@ -52,8 +52,6 @@
 
     <script>
         var objectUrl;
-        var filename = "test";
-
         function SaveScene() {
             BABYLON.Tools.CreateScreenshot(engine, Maincamera, 400, function (imagedata) {
                 if (objectUrl) {
@@ -64,10 +62,6 @@
                 Livewire.emit('SaveProject', serializedSceneJson,imagedata);
 
             });
-
-
-
-
         }
     </script>
 </nav>

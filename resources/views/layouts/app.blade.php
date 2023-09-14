@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') | {{ config('app.name') }}</title>
+    <title>@yield('title') | {{ setting('site.title') }}</title>
 
     <livewire:styles/>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
@@ -20,7 +20,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a href="{{ route('index') }}" class="navbar-brand">
-                <i class="fa fa-code text-primary"></i> {{ config('app.name') }}
+                <i class="fa fa-code text-primary"></i> {{ setting('site.title') }}
             </a>
 
             <button type="button" data-bs-toggle="collapse" data-bs-target="#nav" class="navbar-toggler">

@@ -14,23 +14,6 @@
             <livewire:inc.timeline/>
 
             <div class="toolbar">
-                <button class="button mat-icon material-icons mat-icon-no-color" title="Timeline selection mode"
-                        onclick="selectMode()">tab_unselected
-                </button>
-                <button class="button mat-icon material-icons mat-icon-no-color"
-                        title="Timeline pan mode with the keyframe selection." onclick="panMode(true)">pan_tool_alt
-                </button>
-                <button class="button mat-icon material-icons mat-icon-no-color"
-                        title="Timeline pan mode non interactive"
-                        onclick="panMode(false)">pan_tool
-                </button>
-                <button class="button mat-icon material-icons mat-icon-no-color"
-                        title="Timeline zoom mode. Also ctrl + scroll can be used." onclick="zoomMode()">search
-                </button>
-                <button class="button mat-icon material-icons mat-icon-no-color" title="Only view mode."
-                        onclick="noneMode()">visibility
-                </button>
-                <div style="width: 1px; background: gray; height: 100%"></div>
                 <button class="button mat-icon material-icons mat-icon-no-color"
                         title="Use external player to play\stop the timeline. For the demo simple setInterval is used."
                         onclick="onPlayClick()">
@@ -40,6 +23,12 @@
                         title="Use external player to play\stop the timeline. For the demo simple setInterval is used."
                         onclick="onPauseClick()">
                     pause
+                </button>
+
+                <button class="button mat-icon material-icons mat-icon-no-color"
+                        title="Use external player to play\stop the timeline. For the demo simple setInterval is used."
+                        onclick="onStopClick()">
+                    stop
                 </button>
                 <div style="flex: 1"></div>
                 <button class="flex-left button mat-icon material-icons mat-icon-no-color"

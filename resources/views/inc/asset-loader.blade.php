@@ -53,7 +53,7 @@
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
             @foreach($Animations as $Animation)
                 <div class="card shadow"
-                     onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}' )">
+                     onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}','{{$Animation->title}}' )">
                     <div class="card-body">
                         <img src="{{Voyager::image($Animation->icon)}}" width="128">
                         {{$Animation->title}}
@@ -145,16 +145,17 @@
             }
             // You can add more conditions for other target properties if needed
         }
-
-        return totalKeyframesCount;
+        var milliseconds = (totalKeyframesCount / frameRate) * 1000;
+        return milliseconds / 18;
+        //  return totalKeyframesCount;
     }
 
-    function loadAnimation(asset_url) {
+    function loadAnimation(asset_url, name) {
         BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
             var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
 
+            var endFrame_ = lastGroup.to;
             var animatables = lastGroup._animatables;
-            console.log("time frame : " + timeline.getTime() / 60)
             animatables.forEach(anim => {
                 var new_target = findNodeByName(selectedMesh, anim.target.name);
 
@@ -183,7 +184,10 @@
                 }
             });
             lastGroup.normalize(0, lastGroup.to);
-
+            lastGroup.blendingSpeed = 0.1;
+            lastGroup.enableBlending = true;
+            lastGroup.weight = 1.0;
+            lastGroup.name = selectedMesh.name + "_" + name;
             //    lastGroup.dispose();
 
             meshes.forEach(mesh => {
@@ -199,18 +203,20 @@
                 // Add keyframe
                 let rows = [
                     {
-                        title: selectedMesh.name,
+                        title: selectedMesh.name + "_" + name,
                         style: {
-                            height: 100,
+                            height: 60,
                             keyframesStyle: {
                                 shape: 'rect',
                                 width: 4,
-                                height: 70,
+                                height: 60,
                             },
                         },
+                        offset: timeline.getTime() / 200,
                         keyframes: [
                             {val: timeline.getTime()},
-                            {val: timeline.getTime() + getTotalKeyframesCount(lastGroup)}
+                            //  {val: (timeline.getTime()) + getTotalKeyframesCount(lastGroup)}
+                            {val: (timeline.getTime()) + endFrame_ * frameRate}
                         ],
                     },
                 ];

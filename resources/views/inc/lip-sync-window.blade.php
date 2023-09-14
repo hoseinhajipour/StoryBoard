@@ -1,43 +1,49 @@
 <div class="text-center">
     <script type="module" src="{{asset("js/LipSyncTimeline.js")}}"></script>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LipSyncModal">
+    <button type="button" class="btn btn-primary" onclick="openDialog()">
         Open Lip sync Editor
     </button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="LipSyncModal" wire:ignore tabindex="-1" aria-labelledby="LipSyncModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-dark" id="LipSyncModalLabel">Lip Sync Editor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="d-none">
+        <div id="dialog">
+            <div data-role="body">
+                <label>Title</label>
+                <input id="lipsync_title" type="text" class="form-control my-3">
+                <label> Zoom: <input type="range" min="10" max="1000" value="100"> </label>
+                <div id="waveform">
+                    <!-- the waveform will be rendered here -->
                 </div>
-                <div class="modal-body">
+                <form wire:submit.prevent="AnalyzeAudio">
+                    <input type="file" wire:model="audio">
+                    <button type="submit">Analyze Audio</button>
+                </form>
 
-                    <label>Title</label>
-                    <input id="lipsync_title" type="text" class="form-control my-3">
-                    <label> Zoom: <input type="range" min="10" max="1000" value="100"> </label>
-                    <div id="waveform">
-                        <!-- the waveform will be rendered here -->
-                    </div>
-                    <form wire:submit.prevent="AnalyzeAudio">
-                        <input type="file" wire:model="audio">
-                        <button type="submit">Analyze Audio</button>
-                    </form>
-
-                    <button id="lipSync" class="btn btn-primary">lip Sync KeyFrame</button>
-                    <button id="play" class="btn btn-success">Play</button>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+                <button id="lipSync" class="btn btn-primary">lip Sync KeyFrame</button>
+                <button id="play" class="btn btn-success">Play</button>
+                pariatur.
             </div>
         </div>
     </div>
 
+
     @push('script')
+        <script type="text/javascript">
+            var dialog;
+
+            function openDialog() {
+                dialog = $("#dialog").dialog({
+                    minWidth: 200,
+                    maxWidth: innerWidth / 2,
+                    minHeight: 300,
+                    maxHeight: innerHeight / 2,
+                    width: innerWidth / 2,
+                    height: innerHeight / 2,
+                    modal: false
+                });
+            }
+
+
+        </script>
         <script>
             var HeadMesh;
             var excludeTargets = [];
@@ -374,6 +380,40 @@
 
 
                         MasteranimationGroup.normalize(0, MasteranimationGroup.to);
+
+                        updateObjectNamesFromScene();
+
+
+                        if (timeline) {
+                            // Add keyframe
+                            let rows = [
+                                {
+                                    title: selectedMesh.name + "_" + $("#lipsync_title").val(),
+                                    style: {
+                                        height: 60,
+                                        keyframesStyle: {
+                                            shape: 'rect',
+                                            width: 4,
+                                            height: 60,
+                                        },
+                                    },
+                                    offset: timeline.getTime() / 200,
+                                    keyframes: [
+                                        {val: timeline.getTime()},
+                                        {val: (timeline.getTime()) + MasteranimationGroup.to * frameRate}
+                                    ],
+                                },
+                            ];
+
+                            // Add keyframe
+                            const currentModel = timeline.getModel();
+                            currentModel.rows.push(rows[0]);
+                            timeline.setModel(currentModel);
+
+                            // Generate outline list menu
+                            generateHTMLOutlineListNodes(currentModel.rows);
+                        }
+
                         document.addEventListener('playAnim', () => {
                             MasteranimationGroup.play();
                             console.log(MasteranimationGroup);

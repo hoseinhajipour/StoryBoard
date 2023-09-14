@@ -52,9 +52,7 @@
                     group.goToFrame(frame);
                 });
             } else {
-                console.log(frame + ">" + endFrame);
                 if (frame >= endFrame) {
-                    console.log("stop");
                     onStopClick();
                 }
             }

@@ -384,6 +384,19 @@
                         updateObjectNamesFromScene();
 
 
+                        //apply offset frame
+                        var animatables = MasteranimationGroup._targetedAnimations;
+
+                        console.log(animatables);
+                        animatables.forEach(anim => {
+                            var animations = anim.animation._keys;
+
+                            animations.forEach(keyframe => {
+                                keyframe.frame += timeline.getTime() / 60;
+
+                            });
+                        });
+                        console.log(animatables);
                         if (timeline) {
                             // Add keyframe
                             let rows = [

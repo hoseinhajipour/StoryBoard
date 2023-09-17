@@ -56,17 +56,15 @@
 
     </div>
 
-    @push('script')
+    @push('before-script')
         @if($project->file)
             <script>
+                var load_from_url = "{{url($project->file)}}";
+            </script>
 
-                BABYLON.SceneLoader.Load("", "{{url($project->file)}}", engine, function (newscene) {
-                    scene.dispose();
-
-
-                    scene = newscene;
-                    console.log(scene);
-                });
+        @else
+            <script>
+                var load_from_url = null;
             </script>
         @endif
     @endpush

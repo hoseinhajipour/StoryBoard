@@ -14,7 +14,8 @@ class ProjectsPage extends Component
     public function route()
     {
         return Route::get('/projects')
-            ->name('projects');
+            ->name('projects')
+            ->middleware('auth');
     }
 
 

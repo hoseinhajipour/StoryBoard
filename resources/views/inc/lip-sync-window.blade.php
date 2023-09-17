@@ -18,9 +18,26 @@
                     <button type="submit">Analyze Audio</button>
                 </form>
 
-                <button id="lipSync" class="btn btn-primary">lip Sync KeyFrame</button>
-                <button id="play" class="btn btn-success">Play</button>
-                pariatur.
+                <input id="current_audio_url" type="hidden">
+                <button id="AppendToTimeLine" class="btn btn-primary">Append To TimeLine</button>
+                <button id="playLipSyncNow" class="btn btn-success"><span class="fa fa-play"></span></button>
+            </div>
+        </div>
+
+
+        <div id="dialog_lip_icons">
+            <div data-role="body text-dark">
+                <div class="row">
+                    @foreach($lips_icons as $icon)
+                        <div class="col-3 text-center">
+                            <button onclick="SetLipKey('{{$icon->name}}')">
+                                <img src="{{Voyager::image($icon->icon)}}" width="100%"/>
+                            </button>
+                            <label class="d-block">{{$icon->name}}</label>
+                        </div>
+                    @endforeach
+
+                </div>
             </div>
         </div>
     </div>
@@ -31,6 +48,10 @@
             var dialog;
 
             function openDialog() {
+
+                document.dispatchEvent(new Event("initAudio"));
+
+
                 dialog = $("#dialog").dialog({
                     minWidth: 200,
                     maxWidth: innerWidth / 2,
@@ -40,9 +61,29 @@
                     height: innerHeight / 2,
                     modal: false
                 });
+
+
             }
 
+            var dialog_lip_icons;
+            var current_region;
 
+            function openDialoglip_icons(region) {
+                current_region = region;
+                dialog_lip_icons = $("#dialog_lip_icons").dialog({
+                    minWidth: 200,
+                    maxWidth: innerWidth / 3,
+                    minHeight: 300,
+                    maxHeight: innerHeight / 2,
+                    width: innerWidth / 3,
+                    height: innerHeight / 2,
+                    modal: false
+                });
+            }
+
+            function SetLipKey(new_key) {
+                current_region.content.innerText = new_key;
+            }
         </script>
         <script>
             var HeadMesh;
@@ -387,21 +428,57 @@
                         //apply offset frame
                         var animatables = MasteranimationGroup._targetedAnimations;
 
-                        console.log(animatables);
+                        var frame = (timeline.getTime() / 1000) * frameRate;
+
+                        var customEventData = {
+                            name_: selectedMesh.name + "_" + $("#lipsync_title").val(),
+                            url_: $("#current_audio_url").val(),
+                        };
+
+                        var event1 = new BABYLON.AnimationEvent(
+                            frame,
+                            function (customEventData) {
+                                if (playing == true) {
+                                    // You can access custom values from the customEventData object
+                                    var name_ = customEventData.name_;
+                                    var url_ = customEventData.url_;
+
+                                    // Load the sound and play it automatically once ready
+                                    new BABYLON.Sound(
+                                        name_,
+                                        url_,
+                                        scene,
+                                        function () {
+                                            this.play();
+                                        },
+                                        {
+                                            loop: false,
+                                            autoplay: false, // You can set this to true if you want it to autoplay
+                                        }
+                                    );
+                                }
+                            }.bind(null, customEventData), // Bind customEventData to the event handler
+                            true
+                        );
+
+                        // Attach your event to your animation
+                        animatables[0].animation.addEvent(event1);
+
                         animatables.forEach(anim => {
                             var animations = anim.animation._keys;
-
                             animations.forEach(keyframe => {
                                 keyframe.frame += timeline.getTime() / 60;
 
                             });
                         });
-                        console.log(animatables);
+
                         if (timeline) {
                             // Add keyframe
                             let rows = [
                                 {
                                     title: selectedMesh.name + "_" + $("#lipsync_title").val(),
+                                    audio_url: $("#current_audio_url").val(),
+                                    type: "audio",
                                     style: {
                                         height: 60,
                                         keyframesStyle: {
@@ -429,9 +506,6 @@
 
                         document.addEventListener('playAnim', () => {
                             MasteranimationGroup.play();
-                            console.log(MasteranimationGroup);
-                            console.log(selectedMesh);
-                            console.log('start event triggered on platform');
                         });
 
 

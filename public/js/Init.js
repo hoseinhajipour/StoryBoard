@@ -11,6 +11,8 @@ var frameRate = 30;
 var HighlightLayer;
 const createScene = function (laoadformurl = null) {
     const scene = new BABYLON.Scene(engine);
+
+
     Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 1, new BABYLON.Vector3(0, 0, 0), scene);
     Maincamera.setPosition(new BABYLON.Vector3(0, 1.5, 2));
     Maincamera.minZ = 0.001;
@@ -21,7 +23,7 @@ const createScene = function (laoadformurl = null) {
     Maincamera.setTarget(new BABYLON.Vector3(0, 1.5, 0));
     Maincamera.attachControl(canvas, true);
     this.Maincamera.wheelPrecision = 100;
-   // this.Maincamera.zoomToMouseLocation = true;
+    // this.Maincamera.zoomToMouseLocation = true;
 
 
     const light_0 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
@@ -71,7 +73,20 @@ const createScene = function (laoadformurl = null) {
 };
 
 
+
 var scene = createScene(); //Call the createScene function
+
+
+if (load_from_url) {
+    BABYLON.SceneLoader.Append("", load_from_url, this.scene, (objectData) => {
+        console.log(objectData);
+        this.Maincamera = objectData.cameras[0];
+        this.HighlightLayer=objectData.effectLayers[0];
+        updateObjectNamesFromScene();
+    });
+
+}
+
 // Register a render loop to repeatedly render the scene
 engine.runRenderLoop(function () {
     if (scene) {
@@ -124,3 +139,5 @@ document.addEventListener("keydown", function (event) {
             break;
     }
 });
+
+

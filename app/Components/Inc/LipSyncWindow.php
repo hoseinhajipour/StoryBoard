@@ -2,14 +2,23 @@
 
 namespace App\Components\Inc;
 
+use App\Models\LipsIcon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
 class LipSyncWindow extends Component
 {
     use WithFileUploads;
+
     public $audio;
 
+
+    public $lips_icons = [];
+
+    public function mount()
+    {
+        $this->lips_icons = LipsIcon::all();
+    }
 
     public function AnalyzeAudio()
     {
@@ -64,6 +73,7 @@ class LipSyncWindow extends Component
 
     public function render()
     {
+
         return view('inc.lip-sync-window');
     }
 }

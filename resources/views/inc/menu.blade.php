@@ -32,7 +32,7 @@
                         Create
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="#" class="dropdown-item">Add Camera</a>
+                        <a href="#" onclick="AddCamera()"  class="dropdown-item">Add Camera</a>
                         <a href="#" onclick="AddCube()" class="dropdown-item">Add Cube</a>
                         <a href="#" class="dropdown-item">Add Plane</a>
                         <a href="#" class="dropdown-item">Add Light</a>

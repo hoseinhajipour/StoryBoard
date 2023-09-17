@@ -35,7 +35,7 @@ function RenderMovie() {
     if (BABYLON.VideoRecorder.IsSupported(engine)) {
 
         var recorderOptions = {
-          //  mimeType: 'mp4',
+            //  mimeType: 'mp4',
             fps: 60,
             recordChunckSize: 2048,
         };
@@ -67,6 +67,14 @@ function RenderMovie() {
     }
 
 }
+
+function AddCamera() {
+    var newMaincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 1, Maincamera.position, scene);
+    newMaincamera.minZ = 0.001;
+    newMaincamera.collisionMask = 1; // Check to see if needed
+    newMaincamera.checkCollisions = true;
+}
+
 
 function AddCube() {
     var cube = BABYLON.MeshBuilder.CreateBox("Cube " + (scene.meshes.length + 1), {size: 1}, scene);

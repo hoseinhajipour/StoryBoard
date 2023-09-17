@@ -1,9 +1,9 @@
 <div>
     <div class="row">
-        <div class="col-8">
+        <div class="col-9">
             <canvas id="renderCanvas"></canvas>
         </div>
-        <div class="col-4 height_ctrl">
+        <div class="col-3 height_ctrl">
             <livewire:inc.asset-loader/>
             <livewire:inc.tree-view-objects/>
             <livewire:inc.lip-sync-window/>

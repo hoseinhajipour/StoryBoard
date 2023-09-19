@@ -2,6 +2,8 @@
 
 namespace App\Components\Modal;
 
+use App\Models\Animation;
+use App\Models\AnimationCategory;
 use App\Models\Character;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -17,6 +19,14 @@ class UploadAssetModal extends Component
     public $type;
     public $title;
 
+    public $category_select;
+    public $categories = [];
+
+    public function mount()
+    {
+        $this->categories = AnimationCategory::all();
+    }
+
     public function uploadFile()
     {
         if ($this->type == "Character") {
@@ -30,6 +40,19 @@ class UploadAssetModal extends Component
             $newChar->user_id = Auth::user()->id;
             $newChar->save();
 
+        }
+
+        if ($this->type == "Animation") {
+            $thumbnailPath = $this->thumbnail->store('assets/Animation', 'public');
+            $filePath = $this->glbfile->store('assets/Animation', 'public');
+
+            $newChar = new Animation();
+            $newChar->icon = $thumbnailPath;
+            $newChar->url = $filePath;
+            $newChar->title = $this->title;
+            $newChar->user_id = Auth::user()->id;
+            $newChar->category_id = $this->category_select;
+            $newChar->save();
         }
 
     }

@@ -20,6 +20,14 @@
                         <option value="Animation">Animation</option>
                         <option value="Props">Props</option>
                     </select>
+
+                    <label>Category</label>
+                    <select wire:model.defer="category_select" class="form-control my-2">
+                        @foreach($categories as $category)
+                            <option value="{{$category->id}}">{{$category->title}}</option>
+                        @endforeach
+
+                    </select>
                     <label>Title</label>
                     <input wire:model.defer="title" type="text" class="form-control">
 

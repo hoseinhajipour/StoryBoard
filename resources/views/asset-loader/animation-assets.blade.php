@@ -18,10 +18,26 @@
         </div>
         <div class="col-8 ">
             <div class="row">
+                <div class="col-12 my-2">
+                    <div class="input-group">
+                        <input class="form-control border-end-0 border rounded-pill" type="text" value="search"
+                               id="example-search-input">
+                        <span class="input-group-append">
+                <button class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill ms-n3"
+                        type="button">
+                    <i class="fa fa-search"></i>
+                </button>
+            </span>
+                    </div>
+
+                </div>
                 @foreach($Animations as $Animation)
                     <div class="col-6">
                         <div class="card shadow text-center"
-                             onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}','{{$Animation->title}}' )">
+                             @if(json_decode($Animation->url))
+                                 onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}','{{$Animation->title}}' )"
+                            @endif
+                        >
                             <div class="card-body">
                                 <img src="{{Voyager::image($Animation->icon)}}" width="128">
                                 {{$Animation->title}}

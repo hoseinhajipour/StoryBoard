@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Sep 04, 2023 at 08:26 PM
+-- Generation Time: Sep 19, 2023 at 02:33 PM
 -- Server version: 8.0.31
--- PHP Version: 8.1.13
+-- PHP Version: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,22 +30,52 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `animations`;
 CREATE TABLE IF NOT EXISTS `animations` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `length` float DEFAULT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
+  `category_id` int UNSIGNED DEFAULT NULL,
+  `user_id` int UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `animations`
 --
 
-INSERT INTO `animations` (`id`, `title`, `icon`, `length`, `url`, `created_at`, `updated_at`) VALUES
-(1, 'walk', NULL, NULL, '[{\"download_link\":\"animations\\\\August2023\\\\vNfb0Fa4NZ8dLXG9DmJh.glb\",\"original_name\":\"walk.glb\"}]', '2023-08-25 16:21:19', '2023-08-25 16:21:19'),
-(2, 'dying', NULL, NULL, '[{\"download_link\":\"animations\\\\August2023\\\\gJoSF3AbbSGPUrlhYaP1.fbx\",\"original_name\":\"Dying.fbx\"}]', '2023-08-29 15:51:52', '2023-08-29 15:53:47');
+INSERT INTO `animations` (`id`, `title`, `icon`, `length`, `url`, `created_at`, `updated_at`, `category_id`, `user_id`) VALUES
+(6, 'Talk02', NULL, NULL, '[{\"download_link\":\"animations\\\\September2023\\\\AqLTbb1fQ4wxLdnr7LPt.glb\",\"original_name\":\"Talk02.glb\"}]', '2023-09-07 14:38:30', '2023-09-19 10:57:33', 4, 1),
+(8, 'idle', NULL, NULL, '[{\"download_link\":\"animations\\\\September2023\\\\mmUJrbDsRX1YySDSgcY4.glb\",\"original_name\":\"Idle02.glb\"}]', '2023-09-08 08:02:46', '2023-09-19 10:57:55', 2, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `animation_categories`
+--
+
+DROP TABLE IF EXISTS `animation_categories`;
+CREATE TABLE IF NOT EXISTS `animation_categories` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `parent_id` int DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `animation_categories`
+--
+
+INSERT INTO `animation_categories` (`id`, `title`, `parent_id`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 'feminine', NULL, 2, '2023-09-19 09:48:37', '2023-09-19 09:48:37'),
+(2, 'idle', 1, 2, '2023-09-19 09:49:01', '2023-09-19 09:49:01'),
+(3, 'locomotion', 1, 2, '2023-09-19 09:49:18', '2023-09-19 09:49:18'),
+(4, 'expression', 1, 2, '2023-09-19 09:49:31', '2023-09-19 09:49:31'),
+(5, 'dance', 1, 2, '2023-09-19 09:49:45', '2023-09-19 09:49:45');
 
 -- --------------------------------------------------------
 
@@ -84,22 +114,21 @@ INSERT INTO `categories` (`id`, `parent_id`, `order`, `name`, `slug`, `created_a
 DROP TABLE IF EXISTS `characters`;
 CREATE TABLE IF NOT EXISTS `characters` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `characters`
 --
 
 INSERT INTO `characters` (`id`, `icon`, `title`, `url`, `created_at`, `updated_at`) VALUES
-(1, 'characters\\August2023\\U245J2HBmdCznqt575gm.jpg', 'girl', '[{\"download_link\":\"characters\\\\August2023\\\\pJNwzMBloPwdiUkFJOYM.glb\",\"original_name\":\"girl.glb\"}]', '2023-08-25 12:26:23', '2023-08-25 12:32:51'),
-(2, NULL, 'Soldier', '[{\"download_link\":\"characters\\\\August2023\\\\alivGd2MagiFTYMOmPlz.glb\",\"original_name\":\"Soldier.glb\"}]', '2023-08-25 16:44:43', '2023-08-25 16:44:43'),
-(3, 'characters\\August2023\\TAgaLQZP2vttbq4RNYgf.png', 'male', '[{\"download_link\":\"characters\\\\August2023\\\\naPwiKre5KXdrP73Yi7r.glb\",\"original_name\":\"63ffb8f69dc8b8dcb3b5cf7c.glb\"}]', '2023-08-29 15:46:23', '2023-08-29 15:46:23');
+(3, 'characters\\August2023\\TAgaLQZP2vttbq4RNYgf.png', 'male', '[{\"download_link\":\"characters\\\\August2023\\\\naPwiKre5KXdrP73Yi7r.glb\",\"original_name\":\"63ffb8f69dc8b8dcb3b5cf7c.glb\"}]', '2023-08-29 15:46:23', '2023-08-29 15:46:23'),
+(4, 'characters\\September2023\\KRPwJOOG09g37HN3VY4y.png', 'hosein', '[{\"download_link\":\"characters\\\\August2023\\\\hosein.glb\",\"original_name\":\"hosein.glb\"}]', '2023-09-07 10:31:50', '2023-09-07 10:31:50');
 
 -- --------------------------------------------------------
 
@@ -124,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `data_rows` (
   `order` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `data_rows_data_type_id_foreign` (`data_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `data_rows`
@@ -209,8 +238,20 @@ INSERT INTO `data_rows` (`id`, `data_type_id`, `field`, `type`, `display_name`, 
 (76, 11, 'icon', 'image', 'Icon', 0, 1, 1, 1, 1, 1, '{}', 3),
 (77, 11, 'length', 'text', 'Length', 0, 1, 1, 1, 1, 1, '{}', 4),
 (78, 11, 'url', 'file', 'Url', 0, 1, 1, 1, 1, 1, '{}', 5),
-(79, 11, 'created_at', 'timestamp', 'Created At', 0, 0, 0, 0, 0, 0, '{}', 6),
-(80, 11, 'updated_at', 'timestamp', 'Updated At', 0, 0, 0, 0, 0, 0, '{}', 7);
+(79, 11, 'created_at', 'timestamp', 'Created At', 0, 0, 0, 0, 0, 0, '{}', 8),
+(80, 11, 'updated_at', 'timestamp', 'Updated At', 0, 0, 0, 0, 0, 0, '{}', 9),
+(81, 12, 'id', 'text', 'Id', 1, 0, 0, 0, 0, 0, '{}', 1),
+(82, 12, 'title', 'text', 'Title', 0, 1, 1, 1, 1, 1, '{}', 2),
+(83, 12, 'parent_id', 'text', 'Parent Id', 0, 1, 1, 1, 1, 1, '{}', 3),
+(84, 12, 'user_id', 'text', 'User Id', 0, 1, 1, 1, 1, 1, '{}', 4),
+(85, 12, 'created_at', 'timestamp', 'Created At', 0, 1, 1, 1, 0, 1, '{}', 5),
+(86, 12, 'updated_at', 'timestamp', 'Updated At', 0, 0, 0, 0, 0, 0, '{}', 6),
+(87, 12, 'animation_category_belongsto_animation_category_relationship', 'relationship', 'animation_categories', 0, 1, 1, 1, 1, 1, '{\"model\":\"App\\\\Models\\\\AnimationCategory\",\"table\":\"animation_categories\",\"type\":\"belongsTo\",\"column\":\"parent_id\",\"key\":\"id\",\"label\":\"title\",\"pivot_table\":\"animation_categories\",\"pivot\":\"0\",\"taggable\":null}', 7),
+(88, 12, 'animation_category_belongsto_user_relationship', 'relationship', 'users', 0, 1, 1, 1, 1, 1, '{\"model\":\"App\\\\Models\\\\User\",\"table\":\"users\",\"type\":\"belongsTo\",\"column\":\"user_id\",\"key\":\"id\",\"label\":\"email\",\"pivot_table\":\"animation_categories\",\"pivot\":\"0\",\"taggable\":null}', 8),
+(93, 11, 'category_id', 'text', 'Category Id', 0, 1, 1, 1, 1, 1, '{}', 6),
+(94, 11, 'user_id', 'text', 'User Id', 0, 1, 1, 1, 1, 1, '{}', 7),
+(95, 11, 'animation_belongsto_animation_category_relationship', 'relationship', 'animation_categories', 0, 1, 1, 1, 1, 1, '{\"model\":\"App\\\\Models\\\\AnimationCategory\",\"table\":\"animation_categories\",\"type\":\"belongsTo\",\"column\":\"category_id\",\"key\":\"id\",\"label\":\"title\",\"pivot_table\":\"animation_categories\",\"pivot\":\"0\",\"taggable\":null}', 10),
+(96, 11, 'animation_belongsto_user_relationship', 'relationship', 'users', 0, 1, 1, 1, 1, 1, '{\"model\":\"App\\\\Models\\\\User\",\"table\":\"users\",\"type\":\"belongsTo\",\"column\":\"user_id\",\"key\":\"id\",\"label\":\"email\",\"pivot_table\":\"animation_categories\",\"pivot\":\"0\",\"taggable\":null}', 11);
 
 -- --------------------------------------------------------
 
@@ -238,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `data_types` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `data_types_name_unique` (`name`),
   UNIQUE KEY `data_types_slug_unique` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `data_types`
@@ -254,7 +295,8 @@ INSERT INTO `data_types` (`id`, `name`, `slug`, `display_name_singular`, `displa
 (7, 'characters', 'characters', 'Character', 'Characters', NULL, 'App\\Models\\Character', NULL, NULL, NULL, 1, 0, '{\"order_column\":null,\"order_display_column\":null,\"order_direction\":\"asc\",\"default_search_key\":null,\"scope\":null}', '2023-08-25 12:13:49', '2023-08-25 12:27:20'),
 (8, 'scenes', 'scenes', 'Scene', 'Scenes', NULL, 'App\\Models\\Scene', NULL, NULL, NULL, 1, 0, '{\"order_column\":null,\"order_display_column\":null,\"order_direction\":\"asc\",\"default_search_key\":null}', '2023-08-25 12:15:55', '2023-08-25 12:15:55'),
 (9, 'props', 'props', 'Prop', 'Props', NULL, 'App\\Models\\Prop', NULL, NULL, NULL, 1, 0, '{\"order_column\":null,\"order_display_column\":null,\"order_direction\":\"asc\",\"default_search_key\":null}', '2023-08-25 12:17:14', '2023-08-25 12:17:14'),
-(11, 'animations', 'animations', 'Animation', 'Animations', NULL, 'App\\Models\\Animation', NULL, NULL, NULL, 1, 0, '{\"order_column\":null,\"order_display_column\":null,\"order_direction\":\"asc\",\"default_search_key\":null}', '2023-08-25 12:19:29', '2023-08-25 12:19:29');
+(11, 'animations', 'animations', 'Animation', 'Animations', NULL, 'App\\Models\\Animation', NULL, NULL, NULL, 1, 0, '{\"order_column\":null,\"order_display_column\":null,\"order_direction\":\"asc\",\"default_search_key\":null,\"scope\":null}', '2023-08-25 12:19:29', '2023-09-19 10:55:49'),
+(12, 'animation_categories', 'animation-categories', 'Animation Category', 'Animation Categories', NULL, 'App\\Models\\AnimationCategory', NULL, NULL, NULL, 1, 0, '{\"order_column\":null,\"order_display_column\":null,\"order_direction\":\"asc\",\"default_search_key\":null}', '2023-09-19 09:38:32', '2023-09-19 09:38:32');
 
 -- --------------------------------------------------------
 
@@ -273,6 +315,22 @@ CREATE TABLE IF NOT EXISTS `failed_jobs` (
   `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lips_icons`
+--
+
+DROP TABLE IF EXISTS `lips_icons`;
+CREATE TABLE IF NOT EXISTS `lips_icons` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` int DEFAULT NULL,
+  `icon` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -321,7 +379,7 @@ CREATE TABLE IF NOT EXISTS `menu_items` (
   `parameters` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   KEY `menu_items_menu_id_foreign` (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `menu_items`
@@ -345,7 +403,8 @@ INSERT INTO `menu_items` (`id`, `menu_id`, `title`, `url`, `target`, `icon_class
 (15, 1, 'Scenes', '', '_self', NULL, NULL, 17, 3, '2023-08-25 12:15:55', '2023-08-25 12:19:41', 'voyager.scenes.index', NULL),
 (16, 1, 'Props', '', '_self', NULL, NULL, 17, 4, '2023-08-25 12:17:14', '2023-08-25 12:19:41', 'voyager.props.index', NULL),
 (17, 1, 'Assets', '', '_self', NULL, '#000000', NULL, 10, '2023-08-25 12:17:43', '2023-08-25 12:17:50', NULL, ''),
-(18, 1, 'Animations', '', '_self', NULL, NULL, 17, 2, '2023-08-25 12:19:29', '2023-08-25 12:19:41', 'voyager.animations.index', NULL);
+(18, 1, 'Animations', '', '_self', NULL, NULL, 17, 2, '2023-08-25 12:19:29', '2023-08-25 12:19:41', 'voyager.animations.index', NULL),
+(19, 1, 'Animation Categories', '', '_self', NULL, NULL, NULL, 11, '2023-09-19 09:38:32', '2023-09-19 09:38:32', 'voyager.animation-categories.index', NULL);
 
 -- --------------------------------------------------------
 
@@ -455,7 +514,7 @@ CREATE TABLE IF NOT EXISTS `permissions` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `permissions_key_index` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `permissions`
@@ -521,7 +580,12 @@ INSERT INTO `permissions` (`id`, `key`, `table_name`, `created_at`, `updated_at`
 (57, 'read_animations', 'animations', '2023-08-25 12:19:29', '2023-08-25 12:19:29'),
 (58, 'edit_animations', 'animations', '2023-08-25 12:19:29', '2023-08-25 12:19:29'),
 (59, 'add_animations', 'animations', '2023-08-25 12:19:29', '2023-08-25 12:19:29'),
-(60, 'delete_animations', 'animations', '2023-08-25 12:19:29', '2023-08-25 12:19:29');
+(60, 'delete_animations', 'animations', '2023-08-25 12:19:29', '2023-08-25 12:19:29'),
+(61, 'browse_animation_categories', 'animation_categories', '2023-09-19 09:38:32', '2023-09-19 09:38:32'),
+(62, 'read_animation_categories', 'animation_categories', '2023-09-19 09:38:32', '2023-09-19 09:38:32'),
+(63, 'edit_animation_categories', 'animation_categories', '2023-09-19 09:38:32', '2023-09-19 09:38:32'),
+(64, 'add_animation_categories', 'animation_categories', '2023-09-19 09:38:32', '2023-09-19 09:38:32'),
+(65, 'delete_animation_categories', 'animation_categories', '2023-09-19 09:38:32', '2023-09-19 09:38:32');
 
 -- --------------------------------------------------------
 
@@ -602,7 +666,12 @@ INSERT INTO `permission_role` (`permission_id`, `role_id`) VALUES
 (57, 1),
 (58, 1),
 (59, 1),
-(60, 1);
+(60, 1),
+(61, 1),
+(62, 1),
+(63, 1),
+(64, 1),
+(65, 1);
 
 -- --------------------------------------------------------
 
@@ -666,15 +735,39 @@ INSERT INTO `posts` (`id`, `author_id`, `category_id`, `title`, `seo_title`, `ex
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `projects`
+--
+
+DROP TABLE IF EXISTS `projects`;
+CREATE TABLE IF NOT EXISTS `projects` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` int DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `projects`
+--
+
+INSERT INTO `projects` (`id`, `user_id`, `title`, `icon`, `created_at`, `updated_at`) VALUES
+(1, 2, 'test', NULL, '2023-09-19 09:14:56', '2023-09-19 09:14:56');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `props`
 --
 
 DROP TABLE IF EXISTS `props`;
 CREATE TABLE IF NOT EXISTS `props` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -721,9 +814,9 @@ INSERT INTO `roles` (`id`, `name`, `display_name`, `created_at`, `updated_at`) V
 DROP TABLE IF EXISTS `scenes`;
 CREATE TABLE IF NOT EXISTS `scenes` (
   `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` longtext COLLATE utf8mb4_unicode_ci,
-  `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)

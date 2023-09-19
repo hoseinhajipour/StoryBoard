@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
     <div class="container-fluid">
         <a href="{{ route('index') }}" class="navbar-brand">
-            <i class="fa fa-code text-primary"></i> {{setting('site.title') }}
+            <i class="fa fa-code text-primary"></i> {{ setting('site.title') }}
         </a>
 
         <button type="button" data-bs-toggle="collapse" data-bs-target="#nav" class="navbar-toggler">

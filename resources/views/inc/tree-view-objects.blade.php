@@ -117,10 +117,6 @@
                         item.classList.remove("ObjectSelect");
                     }
                 }
-
-
-
-
             }
 
             HighlightLayer.removeAllMeshes();

@@ -39,7 +39,7 @@
                             @endif
                         >
                             <div class="card-body">
-                                <img src="{{Voyager::image($Animation->icon)}}" width="128">
+                                <img src="{{Voyager::image($Animation->icon)}}" width="100%">
                                 {{$Animation->title}}
                             </div>
                         </div>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') | {{ config('app.name') }}</title>
+    <title>@yield('title') | {{ setting('site.title') }}</title>
 
     <livewire:styles/>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
@@ -45,16 +45,23 @@
     <script src="{{asset("js/lib/babylonjs.postProcess.min.js")}}"></script>
     <script src="{{asset("js/lib/babylonjs.proceduralTextures.min.js")}}"></script>
 
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet" />
     <script src="{{asset("animation-timeline-control/lib/animation-timeline.js")}}"></script>
 
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Alpine v3 -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Focus plugin -->
     <script defer src="https://unpkg.com/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <x-livewire-alert::scripts />
+
     @yield('head')
     @stack('head')
 </head>
@@ -69,10 +76,13 @@
 <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+@stack('before-script')
 <script src="{{ asset('js/Init.js') }}"></script>
 <script src="{{ asset('js/MainMenu.js') }}"></script>
 @livewire('livewire-ui-modal')
 @yield('script')
 @stack('script')
+
+
 </body>
 </html>

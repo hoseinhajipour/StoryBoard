@@ -157,3 +157,7 @@ a {
 .content {
     overflow: scroll;
 }
+
+.no_link {
+    text-decoration: none;
+}

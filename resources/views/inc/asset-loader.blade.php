@@ -35,20 +35,25 @@
             @endforeach
         </div>
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            @foreach($Characters as $Character)
-                <div class="card shadow"
-                     onclick="loadModel('{{ url('storage/'.str_replace("\\", "/", json_decode($Character->url)[0]->download_link))  }}','{{$Character->title}}' )">
-                    <div class="card-body">
-                        <img src="{{Voyager::image($Character->icon)}}" width="128">
-                        {{$Character->title}}
+            <div class="row">
+                @foreach($Characters as $Character)
+                    <div class="col-4">
+                        <div class="card shadow text-center my-2"
+                             onclick="loadModel('{{ url('storage/'.str_replace("\\", "/", json_decode($Character->url)[0]->download_link))  }}','{{$Character->title}}' )">
+                            <div class="card-body">
+                                <img src="{{Voyager::image($Character->icon)}}" width="100%">
+                                <b>{{$Character->title}}</b>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+
         </div>
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
             @foreach($Animations as $Animation)
                 <div class="card shadow"
-                     onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}' )">
+                     onclick="loadAnimation('{{ url('storage/'.str_replace("\\", "/", json_decode($Animation->url)[0]->download_link))  }}','{{$Animation->title}}' )">
                     <div class="card-body">
                         <img src="{{Voyager::image($Animation->icon)}}" width="128">
                         {{$Animation->title}}
@@ -84,19 +89,31 @@
             // Copy keyframes from the source animation to the target animation
             for (var j = 0; j < sourceSkeleton.bones.length; j++) {
                 var sourceBone = sourceSkeleton.bones[j];
-                var targetBone = targetSkeleton.getBoneByName(sourceBone.name);
+                console.log(sourceBone.name);
+                if (sourceBone.name != "RightEye" || sourceBone.name != "LeftEye") {
 
-                if (targetBone) {
-                    var sourceAnimation = sourceBone.animations[i];
 
-                    if (sourceAnimation) {
-                        // Clone the animation from the source bone to the target bone
-                        var targetAnimation = sourceAnimation.clone();
+                    var targetBone = targetSkeleton.getBoneByName(sourceBone.name);
 
-                        // Add the cloned animation to the target animation range
-                        targetAnimationRange.addTargetedAnimation(targetAnimation, targetBone);
+                    if (targetBone) {
+
+
+                        var sourceAnimation = sourceBone.animations[i];
+
+                        if (sourceAnimation) {
+                            // Clone the animation from the source bone to the target bone
+                            var targetAnimation = sourceAnimation.clone();
+
+                            // Add the cloned animation to the target animation range
+                            targetAnimationRange.addTargetedAnimation(targetAnimation, targetBone);
+                        }
                     }
+
+                } else {
+
                 }
+
+
             }
         }
     }
@@ -128,24 +145,49 @@
             }
             // You can add more conditions for other target properties if needed
         }
-
-        return totalKeyframesCount;
+        var milliseconds = (totalKeyframesCount / frameRate) * 1000;
+        return milliseconds / 18;
+        //  return totalKeyframesCount;
     }
-    function loadAnimation(asset_url) {
+
+    function loadAnimation(asset_url, name) {
         BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
             var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
 
+            var endFrame_ = lastGroup.to;
             var animatables = lastGroup._animatables;
             animatables.forEach(anim => {
                 var new_target = findNodeByName(selectedMesh, anim.target.name);
+
                 if (new_target) {
-                    var animations = anim.target.animations;
-                    animations.forEach(_anim => {
-                        new_target.animations.push(_anim);
-                        lastGroup.addTargetedAnimation(_anim, new_target);
-                    })
+                    if (new_target.name !== "RightEye" && new_target.name !== "LeftEye") {
+                        var animations = anim.target.animations;
+
+                        animations.forEach(_anim => {
+                            // Create a copy of the _anim animation
+                            var modifiedAnim = _anim.clone();
+
+
+                            // Offset the keyframes in the modified animation
+                            modifiedAnim.getKeys().forEach(keyframe => {
+                                // Offset the keyframe as needed
+                                keyframe.frame += timeline.getTime() / 60;
+                            });
+
+                            // Push the modified animation to new_target.animations
+                            new_target.animations.push(modifiedAnim);
+
+                            // Add the modified animation as a targeted animation
+                            lastGroup.addTargetedAnimation(modifiedAnim, new_target);
+                        });
+                    }
                 }
             });
+            lastGroup.normalize(0, lastGroup.to);
+            lastGroup.blendingSpeed = 0.1;
+            lastGroup.enableBlending = true;
+            lastGroup.weight = 1.0;
+            lastGroup.name = selectedMesh.name + "_" + name;
             //    lastGroup.dispose();
 
             meshes.forEach(mesh => {
@@ -161,18 +203,20 @@
                 // Add keyframe
                 let rows = [
                     {
-                        title: selectedMesh.name,
+                        title: selectedMesh.name + "_" + name,
                         style: {
-                            height: 100,
+                            height: 60,
                             keyframesStyle: {
                                 shape: 'rect',
                                 width: 4,
-                                height: 70,
+                                height: 60,
                             },
                         },
+                        offset: timeline.getTime() / 200,
                         keyframes: [
                             {val: timeline.getTime()},
-                            {val: timeline.getTime() + getTotalKeyframesCount(lastGroup)}
+                            //  {val: (timeline.getTime()) + getTotalKeyframesCount(lastGroup)}
+                            {val: (timeline.getTime()) + endFrame_ * frameRate}
                         ],
                     },
                 ];

@@ -5,41 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') | {{ config('app.name') }}</title>
+    <title>@yield('title') | {{ setting('site.title') }}</title>
 
     <livewire:styles/>
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <style>
-        html, body {
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        #renderCanvas {
-            width: 100%;
-            height: 100%;
-            touch-action: none;
-        }
-    </style>
-    <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
-    <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
-    <script src="https://cdn.babylonjs.com/viewer/babylon.viewer.js"></script>
-    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
-    <!-- links to the latest version of the minified serializers -->
-    <script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
 
-    <script src="https://cdn.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <x-livewire-alert::scripts />
 
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a href="{{ route('index') }}" class="navbar-brand">
-                <i class="fa fa-code text-primary"></i> {{ config('app.name') }}
+                <i class="fa fa-code text-primary"></i> {{ setting('site.title') }}
             </a>
 
             <button type="button" data-bs-toggle="collapse" data-bs-target="#nav" class="navbar-toggler">

@@ -23,14 +23,14 @@
                     <label>Title</label>
                     <input wire:model.defer="title" type="text" class="form-control">
 
-                    <form wire:submit.prevent="uploadFile">
+                    <form wire:submit.prevent="uploadFile"  enctype="multipart/form-data">
                         <label>thumbnail Image</label>
                         <br/>
-                        <input type="file" wire:model.defer="thumbnail">
+                        <input type="file" wire:model="thumbnail">
                         <br/>
                         <label>Glb File</label>
                         <br/>
-                        <input type="file" wire:model.defer="glbfile">
+                        <input type="file" wire:model="glbfile">
                         <br/>
                         <button class="btn btn-primary form-control my-3" type="submit">Upload</button>
                     </form>

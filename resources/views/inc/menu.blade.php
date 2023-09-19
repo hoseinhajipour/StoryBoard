@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
+    <div class="container-fluid">
         <a href="{{ route('index') }}" class="navbar-brand">
-            <i class="fa fa-code text-primary"></i> {{ config('app.name') }}
+            <i class="fa fa-code text-primary"></i> {{setting('site.title') }}
         </a>
 
         <button type="button" data-bs-toggle="collapse" data-bs-target="#nav" class="navbar-toggler">
@@ -15,6 +15,7 @@
                         File
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
+                        <a href="#" onclick="SaveScene()" class="dropdown-item">Save</a>
                         <a href="#" onclick="ExportScene()" class="dropdown-item">Export</a>
                     </div>
                 </div>
@@ -31,7 +32,7 @@
                         Create
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="#" class="dropdown-item">Add Camera</a>
+                        <a href="#" onclick="AddCamera()"  class="dropdown-item">Add Camera</a>
                         <a href="#" onclick="AddCube()" class="dropdown-item">Add Cube</a>
                         <a href="#" class="dropdown-item">Add Plane</a>
                         <a href="#" class="dropdown-item">Add Light</a>
@@ -42,10 +43,25 @@
                         Render
                     </a>
                     <div class="dropdown-menu dropdown-menu-end">
-                        <a href="#" class="dropdown-item"></a>
+                        <a href="#" onclick="RenderMovie()" class="dropdown-item">Render As Webm</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        var objectUrl;
+        function SaveScene() {
+            BABYLON.Tools.CreateScreenshot(engine, Maincamera, 400, function (imagedata) {
+                if (objectUrl) {
+                    window.URL.revokeObjectURL(objectUrl);
+                }
+                var serializedScene = BABYLON.SceneSerializer.Serialize(scene);
+                var serializedSceneJson = JSON.stringify(serializedScene);
+                Livewire.emit('SaveProject', serializedSceneJson,imagedata);
+
+            });
+        }
+    </script>
 </nav>

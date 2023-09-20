@@ -441,21 +441,30 @@
                                 if (playing == true) {
                                     // You can access custom values from the customEventData object
                                     var name_ = customEventData.name_;
-                                    var url_ = customEventData.url_;
 
-                                    // Load the sound and play it automatically once ready
-                                    new BABYLON.Sound(
-                                        name_,
-                                        url_,
-                                        scene,
-                                        function () {
-                                            this.play();
-                                        },
-                                        {
-                                            loop: false,
-                                            autoplay: false, // You can set this to true if you want it to autoplay
-                                        }
-                                    );
+                                    var soundByName = scene.getSoundByName(name_);
+
+                                    if (soundByName) {
+                                        soundByName.play();
+                                    } else {
+                                        var url_ = customEventData.url_;
+                                        // Load the sound and play it automatically once ready
+                                        new BABYLON.Sound(
+                                            name_,
+                                            url_,
+                                            scene,
+                                            function () {
+                                                this.play();
+                                            },
+                                            {
+                                                loop: false,
+                                                autoplay: false, // You can set this to true if you want it to autoplay
+                                            }
+                                        );
+
+                                    }
+
+
                                 }
                             }.bind(null, customEventData), // Bind customEventData to the event handler
                             true

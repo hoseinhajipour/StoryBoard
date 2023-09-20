@@ -78,6 +78,14 @@
                 timeline.setOptions({timelineDraggable: true});
             }
 
+            console.log(scene._mainSoundTrack.soundCollection);
+
+            // Iterate through all active sounds and stop each one
+            for (const sound of scene._mainSoundTrack.soundCollection) {
+                sound.stop();
+            }
+
+
         }
 
         function showActivePositionInformation() {

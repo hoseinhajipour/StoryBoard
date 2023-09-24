@@ -161,6 +161,7 @@
                 lastGroup.enableBlending = true;
                 lastGroup.weight = 1.0;
                 lastGroup.name = selectedMesh.name + "_" + name;
+                lastGroup.offset = timeline.getTime() / 60;
                 //    lastGroup.dispose();
 
                 meshes.forEach(mesh => {

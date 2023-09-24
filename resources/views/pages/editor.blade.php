@@ -3,7 +3,7 @@
         <div class="col-2 height_ctrl">
             <livewire:inc.tree-view-objects/>
         </div>
-        <div class="col-7">
+        <div class="col-7" wire:ignore>
             <canvas id="renderCanvas"></canvas>
         </div>
         <div class="col-3 height_ctrl">
@@ -11,8 +11,8 @@
             <livewire:inc.lip-sync-window/>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
+    <div class="row"  wire:ignore>
+        <div class="col-12" >
             <livewire:inc.timeline/>
 
             <div class="toolbar">

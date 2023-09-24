@@ -42,23 +42,30 @@ const createScene = function (laoadformurl = null) {
     var rp = new BABYLON.ReflectionProbe('ref', 1024, scene);
     rp.renderList.push(box);
 
+    /*
+        // Create SSAO and configure all properties (for the example)
+        var ssaoRatio = {
+            ssaoRatio: 0.5, // Ratio of the SSAO post-process, in a lower resolution
+            combineRatio: 2 // Ratio of the combine post-process (combines the SSAO and the scene)
+        };
 
-    // Create SSAO and configure all properties (for the example)
-    var ssaoRatio = {
-        ssaoRatio: 0.5, // Ratio of the SSAO post-process, in a lower resolution
-        combineRatio: 2 // Ratio of the combine post-process (combines the SSAO and the scene)
-    };
+        var ssao = new BABYLON.SSAORenderingPipeline("ssao", scene, ssaoRatio);
+        ssao.fallOff = 0.000001;
+        ssao.area = 1;
+        ssao.radius = 0.0001;
+        ssao.totalStrength = 1.0;
+        ssao.base = 0.5;
 
-    var ssao = new BABYLON.SSAORenderingPipeline("ssao", scene, ssaoRatio);
-    ssao.fallOff = 0.000001;
-    ssao.area = 1;
-    ssao.radius = 0.0001;
-    ssao.totalStrength = 1.0;
-    ssao.base = 0.5;
+        // Attach camera to the SSAO render pipeline
+        scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", Maincamera);
+    */
 
-    // Attach camera to the SSAO render pipeline
-    scene.postProcessRenderPipelineManager.attachCamerasToRenderPipeline("ssao", Maincamera);
 
+    var options = new BABYLON.SceneOptimizerOptions();
+    options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1));
+
+// Optimizer
+    var optimizer = new BABYLON.SceneOptimizer(scene, options);
 
     HighlightLayer = new BABYLON.HighlightLayer("hl1", scene, {
         mainTextureRatio: 1,
@@ -79,7 +86,7 @@ var scene = createScene(); //Call the createScene function
 
 if (load_from_url) {
     BABYLON.SceneLoader.Append("", load_from_url, this.scene, (objectData) => {
-        console.log(objectData);
+      //  console.log(objectData);
         this.Maincamera = objectData.cameras[0];
         this.HighlightLayer=objectData.effectLayers[0];
         updateObjectNamesFromScene();
@@ -98,15 +105,14 @@ engine.runRenderLoop(function () {
 window.addEventListener("resize", function () {
     engine.resize();
 });
-
-//scene.debugLayer.show();
-scene.debugLayer.show({ embedMode: true });
+scene.debugLayer.show();
+//scene.debugLayer.show({ embedMode: true });
 document.addEventListener("keydown", function (event) {
     // Check the key code and toggle gizmos accordingly
 
     if (event.key === "f" || event.key === "F") {
         // Get the position of the selected gizmo
-        console.log(selectedMesh)
+       // console.log(selectedMesh)
         if (selectedMesh) {
             var meshPosition = selectedMesh.position;
             Maincamera.target = meshPosition;

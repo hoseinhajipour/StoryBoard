@@ -51,6 +51,7 @@
                     }
                     group.goToFrame(frame);
                 });
+                showActivePositionInformation();
             } else {
                 if (frame >= endFrame) {
                     onStopClick();
@@ -58,7 +59,6 @@
             }
 
 
-            showActivePositionInformation();
         });
 
         function onStopClick() {
@@ -78,11 +78,13 @@
                 timeline.setOptions({timelineDraggable: true});
             }
 
-            console.log(scene._mainSoundTrack.soundCollection);
+            //     console.log(scene._mainSoundTrack.soundCollection);
 
             // Iterate through all active sounds and stop each one
-            for (const sound of scene._mainSoundTrack.soundCollection) {
-                sound.stop();
+            if (scene._mainSoundTrack) {
+                for (const sound of scene._mainSoundTrack.soundCollection) {
+                    sound.stop();
+                }
             }
 
 
@@ -115,13 +117,38 @@
         timeline.onKeyframeChanged(function (obj) {
             //  console.log('keyframe: ' + obj.val);
         });
+
+
+        function shiftKeyframes(animationGroup, offset) {
+            for (var i = 0; i < animationGroup.targetedAnimations.length; i++) {
+                var targetedAnimation = animationGroup.targetedAnimations[i];
+                var animation = targetedAnimation.animation;
+                var keys = animation.getKeys();
+                for (var j = 0; j < keys.length; j++) {
+                    if (offset === 0) {
+                        keys[j].frame -= animationGroup.offset;
+                    } else if (offset < animationGroup.offset) {
+                        keys[j].frame -= offset;
+                    } else {
+                        keys[j].frame += offset;
+                    }
+                }
+                animation.setKeys(keys);
+            }
+            animationGroup.offset = offset;
+            animationGroup.normalize();
+        }
+
         timeline.onDragFinished(function (obj) {
             console.log(obj.target.row.title);
-            console.log(obj.target.row.offset);
-
-
-            //  logDraggingMessage(obj, 'dragfinished');
+            var ccurrent_anim_group = scene.getAnimationGroupByName(obj.target.row.title);
+            var new_start = obj.elements[0].keyframe.val / 90;
+            shiftKeyframes(ccurrent_anim_group, new_start);
+            ccurrent_anim_group._from = obj.target.row.keyframes[0].val / 60;
+            ccurrent_anim_group._to = obj.target.row.keyframes[1].val / 60;
         });
+
+
         timeline.onMouseDown(function (obj) {
             var type = obj.target ? obj.target.type : '';
             //  logMessage('mousedown:' + obj.val + '.  target:' + type + '. ' + Math.floor(obj.pos.x) + 'x' + Math.floor(obj.pos.y), 2);

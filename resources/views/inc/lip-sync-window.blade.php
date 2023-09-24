@@ -427,9 +427,7 @@
 
                         //apply offset frame
                         var animatables = MasteranimationGroup._targetedAnimations;
-
                         var frame = (timeline.getTime() / 1000) * frameRate;
-
                         var customEventData = {
                             name_: selectedMesh.name + "_" + $("#lipsync_title").val(),
                             url_: $("#current_audio_url").val(),
@@ -438,7 +436,7 @@
                         var event1 = new BABYLON.AnimationEvent(
                             frame,
                             function (customEventData) {
-                                if (playing == true) {
+                                if (playing === true) {
                                     // You can access custom values from the customEventData object
                                     var name_ = customEventData.name_;
 
@@ -472,7 +470,6 @@
 
                         // Attach your event to your animation
                         animatables[0].animation.addEvent(event1);
-
                         animatables.forEach(anim => {
                             var animations = anim.animation._keys;
                             animations.forEach(keyframe => {

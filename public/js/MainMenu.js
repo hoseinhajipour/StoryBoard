@@ -10,16 +10,12 @@ function ExportScene() {
     });
 
     const skybox = scene.getMeshByName("SkyBox"); // Replace 'yourSkyboxName' with the actual name of your skybox
-    if (skybox) {
-        skybox.setEnabled(false);
-    }
-
-    BABYLON.GLTF2Export.GLBAsync(scene, "fileName").then((gltf) => {
-        // Restore the skybox after exporting
-        if (skybox) {
-            skybox.setEnabled(true);
-        }
-
+    let options = {
+        shouldExportNode: function (node) {
+            return node !== skybox;
+        },
+    };
+    BABYLON.GLTF2Export.GLBAsync(scene, "fileName", options).then((gltf) => {
         gltf.downloadFiles();
     });
 }

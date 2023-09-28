@@ -65,10 +65,23 @@ function RenderMovie() {
 }
 
 function AddCamera() {
-    var newMaincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 1, Maincamera.position, scene);
-    newMaincamera.minZ = 0.001;
-    newMaincamera.collisionMask = 1; // Check to see if needed
-    newMaincamera.checkCollisions = true;
+    var cameraName = prompt("Enter a name for the camera:");
+    // Check if the user entered a camera name and it's not empty
+    if (cameraName !== null && cameraName.trim() !== "") {
+
+
+        var newMaincamera = new BABYLON.ArcRotateCamera(cameraName, 0, 0, 1, Maincamera.position, scene);
+        newMaincamera.minZ = 0.001;
+        newMaincamera.collisionMask = 1; // Check to see if needed
+        newMaincamera.checkCollisions = true;
+
+        updateObjectNamesFromScene();
+    } else {
+        // Handle the case where the user canceled the prompt or entered an empty name
+        alert("Camera creation canceled or camera name is empty.");
+    }
+
+
 }
 
 

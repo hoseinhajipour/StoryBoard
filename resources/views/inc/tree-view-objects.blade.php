@@ -12,6 +12,7 @@
                 <div class="accordion-body bg-dark text-white">
                     <ul id="objectList"></ul>
                     <ul id="lightList"></ul>
+                    <ul id="CameraList"></ul>
                     <ul id="AnimationList"></ul>
                 </div>
             </div>
@@ -22,11 +23,71 @@
 @push('script')
     <script>
         // This function will populate the ul elements with the object names and light names.
+
+
+        function createMeshTreeView() {
+            const meshTree = document.getElementById('objectList');
+
+            function createMeshTree(mesh, parentUl) {
+                const meshLi = document.createElement('li');
+
+                meshLi.addEventListener("click", function () {
+                    toggleNode(meshLi);
+                });
+
+
+                const meshSpan = document.createElement('span');
+                meshSpan.textContent = mesh.name;
+                meshSpan.setAttribute("data-id", mesh.uniqueId); // Set the data-id attribute with the object's ID
+                meshSpan.addEventListener("click", function () {
+                    console.log(mesh.uniqueId);
+                    selectObject(mesh.uniqueId); // Pass the object's ID when selecting
+                });
+
+                meshLi.appendChild(meshSpan);
+                if (parentUl) {
+                    parentUl.appendChild(meshLi);
+                } else {
+                    meshTree.appendChild(meshLi);
+                }
+
+                if (mesh.getChildren().length > 0) {
+                    const childUl = document.createElement('ul');
+                    meshLi.appendChild(childUl);
+
+                    for (const child of mesh.getChildren()) {
+
+                        console.log(child);
+                        createMeshTree(child, childUl);
+                    }
+                }
+            }
+
+
+            function toggleNode(node) {
+                node.classList.toggle("active");
+                const childUl = node.querySelector('ul');
+                if (childUl) {
+                    childUl.style.display = (childUl.style.display === "none") ? "block" : "none";
+                }
+            }
+
+
+            for (let i = 0; i < scene.meshes.length; i++) {
+                const mesh = scene.meshes[i];
+                if (!mesh.parent && mesh instanceof BABYLON.Mesh) { // Check if it's a top-level mesh
+                    createMeshTree(mesh, null);
+                }
+            }
+        }
+
+
         function updateObjectNamesFromScene() {
+            /*
             let objectNames = scene.meshes.map(function (mesh) {
                 return {id: mesh.uniqueId, name: mesh.name};
             });
-
+*/
 
             let lights = scene.lights.map(function (light) {
                 return {id: light.uniqueId, name: light.name};
@@ -42,6 +103,10 @@
             lightList.innerHTML = "";
 
             // Add object names to the objectList
+
+
+            createMeshTreeView(scene);
+            /*
             objectNames.forEach(function (obj) {
                 let li = document.createElement("li");
                 li.textContent = obj.name;
@@ -52,7 +117,7 @@
 
                 objectList.appendChild(li);
             });
-
+*/
 
             // Add light names to the lightList
             lights.forEach(function (light) {
@@ -81,6 +146,30 @@
                 AnimationList.appendChild(anim);
             });
 
+
+            let cameras = scene.cameras.map(function (camera) {
+                return {id: camera.uniqueId, name: camera.name};
+            });
+            let CameraList = document.getElementById("CameraList");
+            CameraList.innerHTML = "";
+
+            cameras.forEach(function (camera) {
+                let li = document.createElement("li");
+                let span = document.createElement("span");
+                let icon = document.createElement("span"); // Create an <i> element for the icon
+                icon.classList.add("fa", "fa-camera"); // Add Font Awesome classes to the icon
+                span.textContent = camera.name;
+
+                span.addEventListener("click", function () {
+                    // Add your click event handler code here
+                });
+
+                li.appendChild(icon); // Append the icon to the span
+                li.appendChild(span);
+                CameraList.appendChild(li);
+            });
+
+
         }
 
         function selectAnim(RowID) {
@@ -88,6 +177,7 @@
             NewAnim.play();
             console.log(NewAnim);
         }
+
 
         // Modify the selectObject function to accept an object ID
         function selectObject(objectId) {
@@ -98,16 +188,16 @@
                 HeadMesh = selectedMesh_;
                 selectedMesh = selectedMesh_;
                 // Add your gizmo and shadow generation logic here
+                gizmoManager.clearGizmoOnEmptyPointerEvent = true;
                 gizmoManager.attachToMesh(selectedMesh_);
-                selectedMesh_.receiveShadows = true;
-                shadowGenerator.addShadowCaster(selectedMesh_, true);
                 gizmoManager.positionGizmoEnabled = true;
                 gizmoManager.rotationGizmoEnabled = false;
                 gizmoManager.scaleGizmoEnabled = false;
+                gizmoManager.boundingBoxGizmoEnabled = true;
 
                 // Add the "ObjectSelect" class to the selected object's <li> element
                 let objectList = document.getElementById("objectList");
-                let objectItems = objectList.getElementsByTagName("li");
+                let objectItems = objectList.getElementsByTagName("span");
 
                 for (let i = 0; i < objectItems.length; i++) {
                     let item = objectItems[i];

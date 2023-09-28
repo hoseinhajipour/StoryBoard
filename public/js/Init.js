@@ -9,6 +9,7 @@ var objectNames = [];
 var Maincamera;
 var frameRate = 30;
 var HighlightLayer;
+var boundingBoxGizmo;
 const createScene = function (laoadformurl = null) {
     const scene = new BABYLON.Scene(engine);
 
@@ -31,16 +32,51 @@ const createScene = function (laoadformurl = null) {
     const light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -1, 1), scene);
     light.position = new BABYLON.Vector3(0, 15, -30);
     gizmoManager = new BABYLON.GizmoManager(scene);
+
+    scene.onPointerObservable.add((pointerInfo) =>
+    {
+        switch (pointerInfo.type)
+        {
+            case BABYLON.PointerEventTypes.POINTERDOWN:
+                switch (pointerInfo.event.button)
+                {
+                    case 0:
+                     //   console.log("LEFT");
+                        break;
+                    case 1:
+                        gizmoManager.boundingBoxGizmoEnabled = false;
+                        break;
+                    case 2:
+                        gizmoManager.boundingBoxGizmoEnabled = false;
+                        break;
+                }
+                break;
+        }
+    });
+
+
     shadowGenerator = new BABYLON.ShadowGenerator(2048, light);
 
     // Skybox
 
     var box = BABYLON.Mesh.CreateBox('SkyBox', 2048, scene, false, BABYLON.Mesh.BACKSIDE);
     box.material = new BABYLON.SkyMaterial('sky', scene);
+    box.backFaceCulling = false;
+    box.isPickable = false;
     box.material.inclination = -0.35;
     // Reflection probe
     var rp = new BABYLON.ReflectionProbe('ref', 1024, scene);
     rp.renderList.push(box);
+
+
+    var ground = BABYLON.Mesh.CreateGround("ground", 10, 10, 1, scene);
+
+    var gridMaterial = new BABYLON.GridMaterial("gridMaterial", scene);
+    gridMaterial.gridRatio = 0.5; // Grid size
+    gridMaterial.mainColor = new BABYLON.Color3(1, 1, 1); // Grid color
+    gridMaterial.lineColor = new BABYLON.Color3(0, 0, 0); // Line color
+    gridMaterial.alpha = 0.5; // Set transparency (0.0 is fully transparent, 1.0 is fully opaque)
+    ground.material = gridMaterial;
 
     /*
         // Create SSAO and configure all properties (for the example)
@@ -66,6 +102,10 @@ const createScene = function (laoadformurl = null) {
 
 // Optimizer
     var optimizer = new BABYLON.SceneOptimizer(scene, options);
+
+
+
+  //  boundingBoxGizmo.isEnabled = false; // Initially, disable the gizmo
 
     HighlightLayer = new BABYLON.HighlightLayer("hl1", scene, {
         mainTextureRatio: 1,
@@ -144,6 +184,19 @@ document.addEventListener("keydown", function (event) {
             gizmoManager.scaleGizmoEnabled = true;
             break;
     }
+});
+
+
+canvas.addEventListener("contextmenu", function (event) {
+
+
+    gizmoManager.positionGizmoEnabled = false;
+    gizmoManager.rotationGizmoEnabled = false;
+    gizmoManager.scaleGizmoEnabled = false;
+    gizmoManager.boundingBoxGizmoEnabled = false;
+
+
+    event.preventDefault(); // Prevent the default context menu
 });
 
 

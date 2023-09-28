@@ -50,8 +50,6 @@
             function openDialog() {
 
                 document.dispatchEvent(new Event("initAudio"));
-
-
                 dialog = $("#dialog").dialog({
                     minWidth: 200,
                     maxWidth: innerWidth / 2,

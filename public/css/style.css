@@ -212,3 +212,26 @@ ul, #myUL {
     background-color: white;
     user-select: none; /* Prevent text selection */
 }
+
+
+.dialog_row {
+    border: 1px solid black;
+    margin-top: 10px;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+
+#objectList ul ul {
+    display: none;
+}
+
+/* Style the plus and minus icons */
+#objectList li:before {
+    content: "+";
+    cursor: pointer;
+}
+
+#objectList li.active:before {
+    content: "-";
+}

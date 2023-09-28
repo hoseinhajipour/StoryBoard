@@ -9,6 +9,8 @@
         <div class="col-3 height_ctrl">
             <livewire:inc.asset-loader/>
             <livewire:inc.lip-sync-window/>
+            <livewire:inc.dialog-wizard/>
+
         </div>
     </div>
     <div class="row"  wire:ignore>

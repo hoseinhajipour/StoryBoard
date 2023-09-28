@@ -56,8 +56,6 @@
                     meshLi.appendChild(childUl);
 
                     for (const child of mesh.getChildren()) {
-
-                        console.log(child);
                         createMeshTree(child, childUl);
                     }
                 }

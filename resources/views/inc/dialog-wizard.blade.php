@@ -20,11 +20,13 @@
                         </div>
                         <div class="col-2">
                             <label>Character</label>
-                            <select id="CharacterList" class="form-control">
+                            <select id="CharacterList" class="character_select form-control">
                                 <option value="character01">character 01</option>
                             </select>
                         </div>
                         <div class="col-5">
+                            <label>dialog Title</label>
+                            <input type="text" class="dialog_title form-control">
                             <label>Audio file</label><br/>
                             <input type="file">
                             <button class="btn btn-success"><span class="fa fa-play"></span></button>
@@ -32,9 +34,10 @@
 
                         <div class="col-2">
                             <label>animation</label>
-                            <select class="form-control">
+                            <select class="animation_select form-control">
                                 @foreach($animations as $animation)
-                                    <option value="{{$animation->id}}">{{$animation->title}}</option>
+                                    <option
+                                        value="{{ url('storage/'.str_replace("\\", "/", json_decode($animation->url)[0]->download_link))  }}">{{$animation->title}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -125,10 +128,60 @@
                 dialogsDiv.appendChild(newRow);
             }
 
-            function CreateAnimation(){
+            function findNodeByUniqueId(uniqueId) {
+                for (var i = 0; i < scene.meshes.length; i++) {
+                    if (scene.meshes[i].uniqueId === uniqueId) {
+                        return scene.meshes[i];
+                    }
+                }
+
+                // If not found among meshes, you can extend this function to search in other types of nodes (lights, cameras, etc.) as needed.
+
+                return null; // Node with uniqueId not found in the scene
+            }
+
+            //------------------------------------------------//
+            function generateAnimations() {
+                const dialogRows = document.querySelectorAll('#dialogs .dialog_row');
+                const animations = [];
+                const characters = [];
+
+                const promises = Array.from(dialogRows).map(async (row) => {
+                    const animationSelect = row.querySelector('.animation_select');
+                    const selectedAnimation = animationSelect.value;
+
+                    animations.push(selectedAnimation);
+
+                    const characterSelect = row.querySelector('.character_select');
+                    let selectedCharacter = scene.getMeshByUniqueID(parseInt(characterSelect.value));
+
+                    characters.push(selectedCharacter);
+
+                    const dialogTitle = row.querySelector('.dialog_title');
+
+                    // Call applyAnimationToCharacter and wait for its completion
+                    await applyAnimationToCharacter(selectedAnimation, dialogTitle.value, selectedCharacter);
+
+                    console.log("next");
+                });
+
+                // Use Promise.all to wait for all promises to complete
+                Promise.all(promises)
+                    .then(() => {
+                        console.log(animations);
+                        console.log(characters);
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            }
+
+
+            function CreateAnimation() {
                 //1- upload all audio
                 //2- generate all lip sync animation
                 //3- append character animations
+                generateAnimations();
                 //4- create camera animation switch
 
             }

@@ -123,14 +123,17 @@
             //  return totalKeyframesCount;
         }
 
-        function loadAnimation(asset_url, name) {
+        function applyAnimationToCharacter(asset_url, name, Character) {
+            console.log(asset_url);
+            console.log(name);
+            console.log(Character.name);
             BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
                 var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
 
                 var endFrame_ = lastGroup.to;
                 var animatables = lastGroup._animatables;
                 animatables.forEach(anim => {
-                    var new_target = findNodeByName(selectedMesh, anim.target.name);
+                    var new_target = findNodeByName(Character, anim.target.name);
 
                     if (new_target) {
                         if (new_target.name !== "RightEye" && new_target.name !== "LeftEye") {
@@ -160,9 +163,8 @@
                 lastGroup.blendingSpeed = 0.1;
                 lastGroup.enableBlending = true;
                 lastGroup.weight = 1.0;
-                lastGroup.name = selectedMesh.name + "_" + name;
+                lastGroup.name = Character.name + "_" + name;
                 lastGroup.offset = timeline.getTime() / 60;
-                //    lastGroup.dispose();
 
                 meshes.forEach(mesh => {
                     mesh.dispose();
@@ -177,7 +179,7 @@
                     // Add keyframe
                     let rows = [
                         {
-                            title: selectedMesh.name + "_" + name,
+                            title: Character.name + "_" + name,
                             style: {
                                 height: 60,
                                 keyframesStyle: {
@@ -205,7 +207,11 @@
                 }
 
             });
+        }
 
+        function loadAnimation(asset_url, name) {
+            var selectedCharcter = selectedMesh;
+            applyAnimationToCharacter(asset_url, name, selectedCharcter)
         }
     </script>
 

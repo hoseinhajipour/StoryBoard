@@ -64,24 +64,57 @@ function RenderMovie() {
 
 }
 
+
+function getRotationRelativeToTarget(camera) {
+    // Get the camera's current position
+    var cameraPosition = camera.position.clone();
+
+    // Get the camera's target position
+    var targetPosition = camera.getTarget().clone();
+
+    // Calculate the direction vector from the target to the camera
+    var direction = cameraPosition.subtract(targetPosition);
+
+    // Calculate the rotation angles (in radians)
+    var yaw = Math.atan2(direction.x, direction.z);
+    var pitch = Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z));
+
+    // Convert radians to degrees for more user-friendly values
+    yaw = BABYLON.Tools.ToDegrees(yaw);
+    pitch = BABYLON.Tools.ToDegrees(pitch);
+
+    // Ensure yaw is between 0 and 360 degrees
+    if (yaw < 0) {
+        yaw += 360;
+    }
+
+    // Return the rotation angles
+    return {yaw: yaw, pitch: pitch};
+}
+
+
+function ConvertArcRotateCameraToFreeCamera(newName) {
+
+    var newCamera = Maincamera.clone();
+    newCamera.name = newName;
+
+    var _quaternion = BABYLON.Quaternion.RotationYawPitchRoll(newCamera.rotation.x, newCamera.rotation.y, newCamera.rotation.x);
+    newCamera.rotationQuaternion = _quaternion;
+    console.log(newCamera);
+}
+
 function AddCamera() {
     var cameraName = prompt("Enter a name for the camera:");
     // Check if the user entered a camera name and it's not empty
     if (cameraName !== null && cameraName.trim() !== "") {
+        ConvertArcRotateCameraToFreeCamera(cameraName);
 
-
-        var newMaincamera = new BABYLON.ArcRotateCamera(cameraName, 0, 0, 1, Maincamera.position, scene);
-        newMaincamera.minZ = 0.001;
-        newMaincamera.collisionMask = 1; // Check to see if needed
-        newMaincamera.checkCollisions = true;
-
+        // Update the scene's object names
         updateObjectNamesFromScene();
     } else {
         // Handle the case where the user canceled the prompt or entered an empty name
         alert("Camera creation canceled or camera name is empty.");
     }
-
-
 }
 
 

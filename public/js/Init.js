@@ -12,8 +12,6 @@ var HighlightLayer;
 var boundingBoxGizmo;
 const createScene = function (laoadformurl = null) {
     const scene = new BABYLON.Scene(engine);
-
-
     Maincamera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 1, new BABYLON.Vector3(0, 0, 0), scene);
     Maincamera.setPosition(new BABYLON.Vector3(0, 1.5, 2));
     Maincamera.minZ = 0.001;

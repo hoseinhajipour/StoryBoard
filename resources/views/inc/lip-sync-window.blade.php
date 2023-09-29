@@ -4,27 +4,36 @@
         Open Lip sync Editor
     </button>
 
-    <div class="d-none">
-        <div id="dialog">
-            <div data-role="body">
-                <label>Title</label>
-                <input id="lipsync_title" type="text" class="form-control my-3">
-                <label> Zoom: <input type="range" min="10" max="1000" value="100"> </label>
-                <div id="waveform">
-                    <!-- the waveform will be rendered here -->
-                </div>
-                <form wire:submit.prevent="AnalyzeAudio">
-                    <input type="file" wire:model="audio">
-                    <button type="submit">Analyze Audio</button>
-                </form>
 
-                <input id="current_audio_url" type="hidden">
-                <button id="AppendToTimeLine" class="btn btn-primary">Append To TimeLine</button>
-                <button id="playLipSyncNow" class="btn btn-success"><span class="fa fa-play"></span></button>
+    <div class="modal fade" id="dialogLipsyncModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" wire:ignore>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" >
+                    <label>Title</label>
+                    <input id="lipsync_title" type="text" class="form-control my-3">
+                    <label> Zoom: <input type="range" min="10" max="1000" value="100"> </label>
+                    <div id="waveform">
+                        <!-- the waveform will be rendered here -->
+                    </div>
+                    <form wire:submit.prevent="AnalyzeAudio">
+                        <input type="file" wire:model="audio">
+                        <button type="submit">Analyze Audio</button>
+                    </form>
+
+                    <input id="current_audio_url" type="hidden">
+                    <button id="AppendToTimeLine" class="btn btn-primary">Append To TimeLine</button>
+                    <button id="playLipSyncNow" class="btn btn-success"><span class="fa fa-play"></span></button>
+                </div>
             </div>
         </div>
+    </div>
 
 
+    <div class="d-none">
         <div id="dialog_lip_icons">
             <div data-role="body text-dark">
                 <div class="row">
@@ -49,6 +58,9 @@
 
             function openDialog() {
                 document.dispatchEvent(new Event("initAudio"));
+
+                $('#dialogLipsyncModal').modal('show');
+                /*
                 dialog = $("#dialog").dialog({
                     minWidth: 200,
                     maxWidth: innerWidth / 2,
@@ -58,6 +70,8 @@
                     height: innerHeight / 2,
                     modal: false
                 });
+
+                 */
             }
 
             var dialog_lip_icons;
@@ -83,7 +97,7 @@
         <script>
             var HeadMesh;
             var excludeTargets = [];
-            var MasteranimationGroup;
+          //  var MasteranimationGroup;
 
             function findMorph(Manager, name) {
                 for (let i = 0; i < Manager.numTargets; i++) {
@@ -353,170 +367,6 @@
 
             }
 
-            function lipSync(phonemes, audio_duration) {
-                if (HeadMesh) {
-                    // Ensure that the mesh has a morph target manager
-                    if (HeadMesh.morphTargetManager) {
-                        var morphVisemeKeys = [];
-                        phonemes.forEach(phoneme => {
-
-                            var viseme = findMorph(HeadMesh.morphTargetManager, mapPhoneme(phoneme.content));
-
-                            if (viseme) {
-                                var start = secondsToFrames(phoneme.start, frameRate);
-                                if (phoneme.duration < 0.2) {
-                                    phoneme.duration = 0.2;
-                                }
-                                var end = secondsToFrames(phoneme.start + phoneme.duration, frameRate);
-                                var mid = start + Math.round((end - start) / 2);
-
-                                if (mid === end) {
-                                    end++;
-                                }
-                                var morphTargetKeys = [];
-                                morphTargetKeys.push({
-                                    frame: start,
-                                    value: 0.0
-                                });
-
-                                morphTargetKeys.push({
-                                    frame: mid,
-                                    value: 1.0
-                                });
-
-                                morphTargetKeys.push({
-                                    frame: end,
-                                    value: 0.0
-                                });
-
-
-                                if (!morphVisemeKeys[mapPhoneme(phoneme.content)]) {
-                                    morphVisemeKeys[mapPhoneme(phoneme.content)] = [];
-                                }
-
-                                morphVisemeKeys[mapPhoneme(phoneme.content)].push(morphTargetKeys);
-
-
-                            }
-                        });
-
-                        // excludeTargets = ["eyeBlinkLeft", "eyeBlinkRight"];
-
-                        MasteranimationGroup = new BABYLON.AnimationGroup("Lipsync_" + $("#lipsync_title").val());
-
-                        combineKeyFrames(MasteranimationGroup, morphVisemeKeys, audio_duration, HeadMesh);
-
-
-                        AutoBlinkAnimate(MasteranimationGroup, audio_duration);
-
-
-                        AllZeroKeyframes(MasteranimationGroup, audio_duration);
-
-
-                        MasteranimationGroup.normalize(0, MasteranimationGroup.to);
-
-                        updateObjectNamesFromScene();
-
-
-                        //apply offset frame
-                        var animatables = MasteranimationGroup._targetedAnimations;
-                        var frame = (timeline.getTime() / 1000) * frameRate;
-                        var customEventData = {
-                            name_: selectedMesh.name + "_" + $("#lipsync_title").val(),
-                            url_: $("#current_audio_url").val(),
-                        };
-
-                        var event1 = new BABYLON.AnimationEvent(
-                            frame,
-                            function (customEventData) {
-                                if (playing === true) {
-                                    // You can access custom values from the customEventData object
-                                    var name_ = customEventData.name_;
-
-                                    var soundByName = scene.getSoundByName(name_);
-
-                                    if (soundByName) {
-                                        soundByName.play();
-                                    } else {
-                                        var url_ = customEventData.url_;
-                                        // Load the sound and play it automatically once ready
-                                        new BABYLON.Sound(
-                                            name_,
-                                            url_,
-                                            scene,
-                                            function () {
-                                                this.play();
-                                            },
-                                            {
-                                                loop: false,
-                                                autoplay: false, // You can set this to true if you want it to autoplay
-                                            }
-                                        );
-
-                                    }
-
-
-                                }
-                            }.bind(null, customEventData), // Bind customEventData to the event handler
-                            true
-                        );
-
-                        // Attach your event to your animation
-                        animatables[0].animation.addEvent(event1);
-                        animatables.forEach(anim => {
-                            var animations = anim.animation._keys;
-                            animations.forEach(keyframe => {
-                                keyframe.frame += timeline.getTime() / 60;
-
-                            });
-                        });
-
-                        if (timeline) {
-                            // Add keyframe
-                            let rows = [
-                                {
-                                    title: selectedMesh.name + "_" + $("#lipsync_title").val(),
-                                    audio_url: $("#current_audio_url").val(),
-                                    type: "audio",
-                                    style: {
-                                        height: 60,
-                                        keyframesStyle: {
-                                            shape: 'rect',
-                                            width: 4,
-                                            height: 60,
-                                        },
-                                    },
-                                    offset: timeline.getTime() / 200,
-                                    keyframes: [
-                                        {val: timeline.getTime()},
-                                        {val: (timeline.getTime()) + MasteranimationGroup.to * frameRate}
-                                    ],
-                                },
-                            ];
-
-                            // Add keyframe
-                            const currentModel = timeline.getModel();
-                            currentModel.rows.push(rows[0]);
-                            timeline.setModel(currentModel);
-
-                            // Generate outline list menu
-                            generateHTMLOutlineListNodes(currentModel.rows);
-                        }
-
-                        document.addEventListener('playAnim', () => {
-                            MasteranimationGroup.play();
-                        });
-
-
-                    } else {
-                        console.error("Morph target manager not found on the mesh.");
-                    }
-                } else {
-                    console.error("Mesh with name 'Wolf3D_Head' not found.");
-                }
-            }
-
-
             function lipSync_(phonemes, audio_duration, _HeadMesh, title,start_frame,audio_url) {
                 if (_HeadMesh) {
                     // Ensure that the mesh has a morph target manager
@@ -564,7 +414,7 @@
                             }
                         });
 
-                        MasteranimationGroup = new BABYLON.AnimationGroup("Lipsync_" + title);
+                       var MasteranimationGroup = new BABYLON.AnimationGroup("Lipsync_" + title);
 
                         combineKeyFrames(MasteranimationGroup, morphVisemeKeys, audio_duration, _HeadMesh);
 
@@ -576,12 +426,18 @@
 
 
                         MasteranimationGroup.normalize(0, MasteranimationGroup.to);
+                        MasteranimationGroup.offset = start_frame;
+                        MasteranimationGroup.blendingSpeed = 0.1;
+                        MasteranimationGroup.enableBlending = true;
+                        MasteranimationGroup.weight = 1.0;
 
                         updateObjectNamesFromScene();
 
 
                         //apply offset frame
                         var animatables = MasteranimationGroup._targetedAnimations;
+
+
 
                         var customEventData = {
                             name_: _HeadMesh.name + "_" + title,

@@ -60,6 +60,7 @@ document.addEventListener('initAudio', () => {
         var title = $("#lipsync_title").val();
         var _HeadMesh = searchForBlendShape(selectedMesh);
 
+
         lipSync_(new_phonemes, audioDuration, _HeadMesh, title, start_frame, audio_url)
     });
 

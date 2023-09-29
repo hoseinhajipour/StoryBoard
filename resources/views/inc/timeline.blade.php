@@ -53,9 +53,12 @@
                 });
                 showActivePositionInformation();
             } else {
+                /*
                 if (frame >= endFrame) {
                     onStopClick();
                 }
+
+                 */
             }
 
 

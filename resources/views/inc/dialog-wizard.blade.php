@@ -249,7 +249,7 @@
                                 // Handle success response here
                                 console.log('File uploaded successfully:', response);
                                 var phonemes = JSON.parse(response.phonemes);
-                                lipSync_(phonemes, audio_duration, _HeadMesh, dialog_title, nextframe, response.audio_url);
+                              //  lipSync_(phonemes, audio_duration, _HeadMesh, dialog_title, nextframe, response.audio_url);
                                 applyAnimationToCharacter(selectedAnimation, dialog_title, selectedCharacter, nextframe);
                             },
                             error: function (error) {

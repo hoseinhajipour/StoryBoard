@@ -50,6 +50,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet" />
     <script src="{{asset("animation-timeline-control/lib/animation-timeline.js")}}"></script>
 
+
+    <link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}">
+
     <!-- Alpine v3 -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -72,7 +75,7 @@
 <livewire:scripts/>
 <script src="{{ asset('js/app.js') }}"></script>
 <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
-
+<script src="{{ asset('js/jquery-ui.js') }}"></script>
 @stack('before-script')
 <script src="{{ asset('js/Init.js') }}"></script>
 <script src="{{ asset('js/MainMenu.js') }}"></script>

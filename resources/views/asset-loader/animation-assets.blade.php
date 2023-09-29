@@ -124,13 +124,10 @@
         }
 
         function applyAnimationToCharacter(asset_url, name, Character, start_frame) {
-            console.log(asset_url);
-            console.log(name);
-            console.log(Character.name);
-            BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes, particleSystems, skeletons) {
+
+            BABYLON.SceneLoader.ImportMesh(null, "", asset_url, scene, function (meshes) {
                 var lastGroup = scene.animationGroups[scene.animationGroups.length - 1];
 
-                var endFrame_ = lastGroup.to;
                 var animatables = lastGroup._animatables;
                 animatables.forEach(anim => {
                     var new_target = findNodeByName(Character, anim.target.name);
@@ -148,6 +145,7 @@
                                 modifiedAnim.getKeys().forEach(keyframe => {
                                     // Offset the keyframe as needed
                                     keyframe.frame += start_frame;
+
                                 });
 
                                 // Push the modified animation to new_target.animations
@@ -195,10 +193,6 @@
                             ],
                         },
                     ];
-                    console.log(lastGroup.to);
-                    console.log(rows[0].keyframes);
-
-
                     // Add keyframe
                     const currentModel = timeline.getModel();
                     currentModel.rows.push(rows[0]);
@@ -212,14 +206,14 @@
         }
 
         function millisecondsToFrames(milliseconds) {
-            var framesPerSecond =  60;
+            var framesPerSecond = 60;
             var seconds = milliseconds / 1000; // Convert milliseconds to seconds
             var frames = seconds * framesPerSecond;
             return frames;
         }
 
         function framesToMilliseconds(frames) {
-            var framesPerSecond =  60;
+            var framesPerSecond = 60;
             var seconds = frames / framesPerSecond;
             var milliseconds = seconds * 1000; // Convert seconds to milliseconds
             return milliseconds;

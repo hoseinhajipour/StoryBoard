@@ -66,7 +66,7 @@ const createScene = function (laoadformurl = null) {
     var rp = new BABYLON.ReflectionProbe('ref', 1024, scene);
     rp.renderList.push(box);
 
-
+/*
     var ground = BABYLON.Mesh.CreateGround("ground", 10, 10, 1, scene);
 
     var gridMaterial = new BABYLON.GridMaterial("gridMaterial", scene);
@@ -75,7 +75,7 @@ const createScene = function (laoadformurl = null) {
     gridMaterial.lineColor = new BABYLON.Color3(0, 0, 0); // Line color
     gridMaterial.alpha = 0.5; // Set transparency (0.0 is fully transparent, 1.0 is fully opaque)
     ground.material = gridMaterial;
-
+*/
     /*
         // Create SSAO and configure all properties (for the example)
         var ssaoRatio = {

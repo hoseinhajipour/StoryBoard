@@ -53,7 +53,14 @@ document.addEventListener('initAudio', () => {
             })
         });
         var audioDuration = wavesurfer.getDuration();
-        lipSync(new_phonemes, audioDuration);
+        //  lipSync(new_phonemes, audioDuration);
+
+        var start_frame = millisecondsToFrames(timeline.getTime());
+        var audio_url = $("#current_audio_url").val();
+        var title = $("#lipsync_title").val();
+        var _HeadMesh = searchForBlendShape(selectedMesh);
+
+        lipSync_(new_phonemes, audioDuration, _HeadMesh, title, start_frame, audio_url)
     });
 
 

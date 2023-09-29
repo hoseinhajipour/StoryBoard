@@ -1,18 +1,19 @@
 <div class="text-center">
-    <script type="module" src="{{asset("js/LipSyncTimeline.js")}}"></script>
+
     <button type="button" class="btn btn-primary" onclick="openDialog()">
         Open Lip sync Editor
     </button>
 
 
-    <div class="modal fade" id="dialogLipsyncModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" wire:ignore>
+    <div class="modal fade" id="dialogLipsyncModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+         wire:ignore>
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content text-dark">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" >
+                <div class="modal-body">
                     <label>Title</label>
                     <input id="lipsync_title" type="text" class="form-control my-3">
                     <label> Zoom: <input type="range" min="10" max="1000" value="100"> </label>
@@ -26,7 +27,6 @@
 
                     <input id="current_audio_url" type="hidden">
                     <button id="AppendToTimeLine" class="btn btn-primary">Append To TimeLine</button>
-                    <button id="playLipSyncNow" class="btn btn-success"><span class="fa fa-play"></span></button>
                 </div>
             </div>
         </div>
@@ -95,9 +95,7 @@
             }
         </script>
         <script>
-            var HeadMesh;
             var excludeTargets = [];
-          //  var MasteranimationGroup;
 
             function findMorph(Manager, name) {
                 for (let i = 0; i < Manager.numTargets; i++) {
@@ -248,7 +246,7 @@
                 return animation;
             }
 
-            function AllZeroKeyframes(animationGroup, audio_duration,_HeadMesh) {
+            function AllZeroKeyframes(animationGroup, audio_duration, _HeadMesh) {
                 // Calculate total frames
                 var totalFrames = secondsToFrames(audio_duration, frameRate);
 
@@ -367,7 +365,7 @@
 
             }
 
-            function lipSync_(phonemes, audio_duration, _HeadMesh, title,start_frame,audio_url) {
+            function lipSync_(phonemes, audio_duration, _HeadMesh, title, start_frame, audio_url) {
                 if (_HeadMesh) {
                     // Ensure that the mesh has a morph target manager
                     if (_HeadMesh.morphTargetManager) {
@@ -392,55 +390,41 @@
                                     frame: start,
                                     value: 0.0
                                 });
-
                                 morphTargetKeys.push({
                                     frame: mid,
                                     value: 1.0
                                 });
-
                                 morphTargetKeys.push({
                                     frame: end,
                                     value: 0.0
                                 });
-
-
                                 if (!morphVisemeKeys[mapPhoneme(phoneme.content)]) {
                                     morphVisemeKeys[mapPhoneme(phoneme.content)] = [];
                                 }
-
                                 morphVisemeKeys[mapPhoneme(phoneme.content)].push(morphTargetKeys);
-
-
                             }
                         });
 
-                       var MasteranimationGroup = new BABYLON.AnimationGroup("Lipsync_" + title);
+                        var FaceAnimationGroup = new BABYLON.AnimationGroup(_HeadMesh.name + "_talk_" + title);
 
-                        combineKeyFrames(MasteranimationGroup, morphVisemeKeys, audio_duration, _HeadMesh);
+                        combineKeyFrames(FaceAnimationGroup, morphVisemeKeys, audio_duration, _HeadMesh);
+                        AutoBlinkAnimate(FaceAnimationGroup, audio_duration, _HeadMesh);
+                        AllZeroKeyframes(FaceAnimationGroup, audio_duration, _HeadMesh);
 
-
-                        AutoBlinkAnimate(MasteranimationGroup, audio_duration, _HeadMesh);
-
-
-                        AllZeroKeyframes(MasteranimationGroup, audio_duration, _HeadMesh);
-
-
-                        MasteranimationGroup.normalize(0, MasteranimationGroup.to);
-                        MasteranimationGroup.offset = start_frame;
-                        MasteranimationGroup.blendingSpeed = 0.1;
-                        MasteranimationGroup.enableBlending = true;
-                        MasteranimationGroup.weight = 1.0;
+                        FaceAnimationGroup.normalize(0, FaceAnimationGroup.to);
+                        FaceAnimationGroup.offset = start_frame;
+                        FaceAnimationGroup.blendingSpeed = 0.1;
+                        FaceAnimationGroup.enableBlending = true;
+                        FaceAnimationGroup.weight = 1.0;
 
                         updateObjectNamesFromScene();
 
-
                         //apply offset frame
-                        var animatables = MasteranimationGroup._targetedAnimations;
-
+                        var animatables = FaceAnimationGroup._targetedAnimations;
 
 
                         var customEventData = {
-                            name_: _HeadMesh.name + "_" + title,
+                            name_: _HeadMesh.name + "_talk_" + title,
                             url_: audio_url,
                         };
 
@@ -477,7 +461,6 @@
                             }.bind(null, customEventData), // Bind customEventData to the event handler
                             true
                         );
-                        console.log(event1);
                         // Attach your event to your animation
                         animatables[0].animation.addEvent(event1);
                         animatables.forEach(anim => {
@@ -492,7 +475,7 @@
                             // Add keyframe
                             let rows = [
                                 {
-                                    title: _HeadMesh.name + "_" + title,
+                                    title: _HeadMesh.name + "_talk_" + title,
                                     audio_url: $("#current_audio_url").val(),
                                     type: "audio",
                                     style: {
@@ -505,8 +488,8 @@
                                     },
                                     offset: start_frame,
                                     keyframes: [
-                                        {val:  framesToMilliseconds(start_frame)},
-                                        {val:  framesToMilliseconds(start_frame + MasteranimationGroup.to )}
+                                        {val: framesToMilliseconds(start_frame)},
+                                        {val: framesToMilliseconds(start_frame + FaceAnimationGroup.to)}
                                     ],
                                 },
                             ];
@@ -519,10 +502,6 @@
                             // Generate outline list menu
                             generateHTMLOutlineListNodes(currentModel.rows);
                         }
-
-                        document.addEventListener('playAnim', () => {
-                            MasteranimationGroup.play();
-                        });
 
 
                     } else {

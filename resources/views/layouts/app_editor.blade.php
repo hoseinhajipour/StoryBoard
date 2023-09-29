@@ -81,7 +81,7 @@
 <script src="{{ asset('js/MainMenu.js') }}"></script>
 @livewire('livewire-ui-modal')
 
-
+<script type="module" src="{{asset("js/LipSyncTimeline.js")}}"></script>
 @yield('script')
 @stack('script')
 

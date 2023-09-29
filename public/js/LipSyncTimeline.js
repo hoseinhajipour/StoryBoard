@@ -40,40 +40,32 @@ document.addEventListener('initAudio', () => {
     });
 
     // Get a reference to the button element
-    var button = document.getElementById('AppendToTimeLine');
-
-    // Add a click event listener
-    button.addEventListener('click', function () {
-        var new_phonemes = [];
-        wsRegions.regions.forEach(region => {
-            new_phonemes.push({
-                start: region.start,
-                duration: region.end - region.start,
-                content: region.content.innerText,
-            })
-        });
-        var audioDuration = wavesurfer.getDuration();
-        //  lipSync(new_phonemes, audioDuration);
-
-        var start_frame = millisecondsToFrames(timeline.getTime());
-        var audio_url = $("#current_audio_url").val();
-        var title = $("#lipsync_title").val();
-        var _HeadMesh = searchForBlendShape(selectedMesh);
-
-
-        lipSync_(new_phonemes, audioDuration, _HeadMesh, title, start_frame, audio_url)
-    });
-
-
-    var play = document.getElementById('playLipSyncNow');
-
-    play.addEventListener('click', function () {
-        wavesurfer.playPause();
-        document.dispatchEvent(new Event("playAnim"));
-    });
 
 });
 
+var button = document.getElementById('AppendToTimeLine');
+
+// Add a click event listener
+button.addEventListener('click', function () {
+    var new_phonemes = [];
+    wsRegions.regions.forEach(region => {
+        new_phonemes.push({
+            start: region.start,
+            duration: region.end - region.start,
+            content: region.content.innerText,
+        })
+    });
+    var audioDuration = wavesurfer.getDuration();
+    //  lipSync(new_phonemes, audioDuration);
+
+    var start_frame = millisecondsToFrames(timeline.getTime());
+    var audio_url = $("#current_audio_url").val();
+    var title = $("#lipsync_title").val();
+    var _HeadMesh = searchForBlendShape(selectedMesh);
+
+
+    lipSync_(new_phonemes, audioDuration, _HeadMesh, title, start_frame, audio_url)
+});
 
 window.addEventListener('conversationHistoryLoaded', function (event) {
     phonemes = JSON.parse(event.detail.phonemes);

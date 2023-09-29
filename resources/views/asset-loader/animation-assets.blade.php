@@ -205,25 +205,8 @@
             });
         }
 
-        function millisecondsToFrames(milliseconds) {
-            var framesPerSecond = 60;
-            var seconds = milliseconds / 1000; // Convert milliseconds to seconds
-            var frames = seconds * framesPerSecond;
-            return frames;
-        }
-
-        function framesToMilliseconds(frames) {
-            var framesPerSecond = 60;
-            var seconds = frames / framesPerSecond;
-            var milliseconds = seconds * 1000; // Convert seconds to milliseconds
-            return milliseconds;
-        }
-
         // Example usage
         var frames = 60; // You can change this to any number of frames
-        var milliseconds = framesToMilliseconds(frames);
-        console.log(milliseconds); // Output will be 1000 milliseconds
-
 
         function loadAnimation(asset_url, name) {
             var selectedCharcter = selectedMesh;

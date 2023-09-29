@@ -48,7 +48,6 @@
             var dialog;
 
             function openDialog() {
-
                 document.dispatchEvent(new Event("initAudio"));
                 dialog = $("#dialog").dialog({
                     minWidth: 200,
@@ -59,8 +58,6 @@
                     height: innerHeight / 2,
                     modal: false
                 });
-
-
             }
 
             var dialog_lip_icons;
@@ -140,11 +137,11 @@
                 return phonemeWeightMapping[trimAndRemoveUnicode(phonemeContent)] || "viseme_sil";
             }
 
-            function combineKeyFrames(animationGroup, morphVisemeKeys, audio_duration) {
+            function combineKeyFrames(animationGroup, morphVisemeKeys, audio_duration, _HeadMesh) {
                 for (var viseme_name in morphVisemeKeys) {
                     //  excludeTargets.push(viseme_name);
                     var VisemeKeys = morphVisemeKeys[viseme_name];
-                    var viseme = findMorph(HeadMesh.morphTargetManager, viseme_name);
+                    var viseme = findMorph(_HeadMesh.morphTargetManager, viseme_name);
 
                     var morphTargetAnimation = new BABYLON.Animation(
                         viseme_name,
@@ -237,14 +234,14 @@
                 return animation;
             }
 
-            function AllZeroKeyframes(animationGroup, audio_duration) {
+            function AllZeroKeyframes(animationGroup, audio_duration,_HeadMesh) {
                 // Calculate total frames
                 var totalFrames = secondsToFrames(audio_duration, frameRate);
 
 
                 // Iterate through morph targets
-                for (let i = 0; i < HeadMesh.morphTargetManager.numTargets; i++) {
-                    const morphTarget = HeadMesh.morphTargetManager.getTarget(i);
+                for (let i = 0; i < _HeadMesh.morphTargetManager.numTargets; i++) {
+                    const morphTarget = _HeadMesh.morphTargetManager.getTarget(i);
 
                     // Check if the morph target is in the exclusion list
                     if (excludeTargets.includes(morphTarget.name)) {
@@ -288,9 +285,9 @@
                 }
             }
 
-            function AutoBlinkAnimate(animationGroup, audio_duration) {
-                var eyeBlinkLeft = findMorph(HeadMesh.morphTargetManager, "eyeBlinkLeft");
-                var eyeBlinkRight = findMorph(HeadMesh.morphTargetManager, "eyeBlinkRight");
+            function AutoBlinkAnimate(animationGroup, audio_duration, _HeadMesh) {
+                var eyeBlinkLeft = findMorph(_HeadMesh.morphTargetManager, "eyeBlinkLeft");
+                var eyeBlinkRight = findMorph(_HeadMesh.morphTargetManager, "eyeBlinkRight");
 
                 var blinkDuration = 5; // Duration of the blink in frames
                 var blinkWait = 50; // Duration of the blink in frames
@@ -409,7 +406,7 @@
 
                         MasteranimationGroup = new BABYLON.AnimationGroup("Lipsync_" + $("#lipsync_title").val());
 
-                        combineKeyFrames(MasteranimationGroup, morphVisemeKeys, audio_duration);
+                        combineKeyFrames(MasteranimationGroup, morphVisemeKeys, audio_duration, HeadMesh);
 
 
                         AutoBlinkAnimate(MasteranimationGroup, audio_duration);
@@ -481,6 +478,168 @@
                             let rows = [
                                 {
                                     title: selectedMesh.name + "_" + $("#lipsync_title").val(),
+                                    audio_url: $("#current_audio_url").val(),
+                                    type: "audio",
+                                    style: {
+                                        height: 60,
+                                        keyframesStyle: {
+                                            shape: 'rect',
+                                            width: 4,
+                                            height: 60,
+                                        },
+                                    },
+                                    offset: timeline.getTime() / 200,
+                                    keyframes: [
+                                        {val: timeline.getTime()},
+                                        {val: (timeline.getTime()) + MasteranimationGroup.to * frameRate}
+                                    ],
+                                },
+                            ];
+
+                            // Add keyframe
+                            const currentModel = timeline.getModel();
+                            currentModel.rows.push(rows[0]);
+                            timeline.setModel(currentModel);
+
+                            // Generate outline list menu
+                            generateHTMLOutlineListNodes(currentModel.rows);
+                        }
+
+                        document.addEventListener('playAnim', () => {
+                            MasteranimationGroup.play();
+                        });
+
+
+                    } else {
+                        console.error("Morph target manager not found on the mesh.");
+                    }
+                } else {
+                    console.error("Mesh with name 'Wolf3D_Head' not found.");
+                }
+            }
+
+
+            function lipSync_(phonemes, audio_duration, _HeadMesh, title) {
+                if (_HeadMesh) {
+                    // Ensure that the mesh has a morph target manager
+                    if (_HeadMesh.morphTargetManager) {
+                        var morphVisemeKeys = [];
+                        phonemes.forEach(phoneme => {
+
+                            var viseme = findMorph(_HeadMesh.morphTargetManager, mapPhoneme(phoneme.content));
+
+                            if (viseme) {
+                                var start = secondsToFrames(phoneme.start, frameRate);
+                                if (phoneme.duration < 0.2) {
+                                    phoneme.duration = 0.2;
+                                }
+                                var end = secondsToFrames(phoneme.start + phoneme.duration, frameRate);
+                                var mid = start + Math.round((end - start) / 2);
+
+                                if (mid === end) {
+                                    end++;
+                                }
+                                var morphTargetKeys = [];
+                                morphTargetKeys.push({
+                                    frame: start,
+                                    value: 0.0
+                                });
+
+                                morphTargetKeys.push({
+                                    frame: mid,
+                                    value: 1.0
+                                });
+
+                                morphTargetKeys.push({
+                                    frame: end,
+                                    value: 0.0
+                                });
+
+
+                                if (!morphVisemeKeys[mapPhoneme(phoneme.content)]) {
+                                    morphVisemeKeys[mapPhoneme(phoneme.content)] = [];
+                                }
+
+                                morphVisemeKeys[mapPhoneme(phoneme.content)].push(morphTargetKeys);
+
+
+                            }
+                        });
+
+                        MasteranimationGroup = new BABYLON.AnimationGroup("Lipsync_" + title);
+
+                        combineKeyFrames(MasteranimationGroup, morphVisemeKeys, audio_duration, _HeadMesh);
+
+
+                        AutoBlinkAnimate(MasteranimationGroup, audio_duration, _HeadMesh);
+
+
+                        AllZeroKeyframes(MasteranimationGroup, audio_duration, _HeadMesh);
+
+
+                        MasteranimationGroup.normalize(0, MasteranimationGroup.to);
+
+                        updateObjectNamesFromScene();
+
+
+                        //apply offset frame
+                        var animatables = MasteranimationGroup._targetedAnimations;
+                        var frame = (timeline.getTime() / 1000) * frameRate;
+                        var customEventData = {
+                            name_: _HeadMesh.name + "_" + title,
+                            url_: $("#current_audio_url").val(),
+                        };
+
+                        var event1 = new BABYLON.AnimationEvent(
+                            frame,
+                            function (customEventData) {
+                                if (playing === true) {
+                                    // You can access custom values from the customEventData object
+                                    var name_ = customEventData.name_;
+
+                                    var soundByName = scene.getSoundByName(name_);
+
+                                    if (soundByName) {
+                                        soundByName.play();
+                                    } else {
+                                        var url_ = customEventData.url_;
+                                        // Load the sound and play it automatically once ready
+                                        new BABYLON.Sound(
+                                            name_,
+                                            url_,
+                                            scene,
+                                            function () {
+                                                this.play();
+                                            },
+                                            {
+                                                loop: false,
+                                                autoplay: false, // You can set this to true if you want it to autoplay
+                                            }
+                                        );
+
+                                    }
+
+
+                                }
+                            }.bind(null, customEventData), // Bind customEventData to the event handler
+                            true
+                        );
+
+                        // Attach your event to your animation
+                        animatables[0].animation.addEvent(event1);
+                        animatables.forEach(anim => {
+                            var animations = anim.animation._keys;
+                            animations.forEach(keyframe => {
+                                keyframe.frame += timeline.getTime() / 60;
+
+                            });
+                        });
+
+                        if (timeline) {
+                            // Add keyframe
+                            let rows = [
+                                {
+                                    title: _HeadMesh.name + "_" + title,
                                     audio_url: $("#current_audio_url").val(),
                                     type: "audio",
                                     style: {

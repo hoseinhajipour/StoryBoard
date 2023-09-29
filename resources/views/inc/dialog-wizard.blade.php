@@ -28,8 +28,8 @@
                             <label>dialog Title</label>
                             <input type="text" class="dialog_title form-control">
                             <label>Audio file</label><br/>
-                            <input type="file">
-                            <button class="btn btn-success"><span class="fa fa-play"></span></button>
+                            <input type="file" class="audio_select" onchange="applyAudioFile(event)">
+                            <audio class="audio_player" controls></audio>
                         </div>
 
                         <div class="col-2">
@@ -140,6 +140,49 @@
                 return null; // Node with uniqueId not found in the scene
             }
 
+            function applyAudioFile(event) {
+                var input = event.target;
+                var audioPlayer = input.closest('.dialog_row').querySelector('.audio_player');
+
+                var file = input.files[0];
+                var reader = new FileReader();
+
+                reader.onloadend = function () {
+                    audioPlayer.src = reader.result;
+                };
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                } else {
+                    audioPlayer.src = ""; // Reset the audio src if no file is selected
+                }
+            }
+
+            function searchForBlendShape(node) {
+                // Check if the current node has a blend shape
+
+                if (node.morphTargetManager) {
+                    // If the node has a blend shape, return it
+                    return node;
+                } else {
+                    // If the current node does not have a blend shape, check its children
+                    if (node.getChildren) {
+                        // Iterate through the child nodes
+                        for (let i = 0; i < node.getChildren().length; i++) {
+                            const childNode = node.getChildren()[i];
+                            // Recursively search for blend shape in child nodes
+                            const result = searchForBlendShape(childNode);
+                            // If a node with blend shape is found, return it
+                            if (result) {
+                                return result;
+                            }
+                        }
+                    }
+                    // If no child node has blend shape, return null
+                    return null;
+                }
+            }
+
             //------------------------------------------------//
             function generateAnimations() {
                 const dialogRows = document.querySelectorAll('#dialogs .dialog_row');
@@ -161,8 +204,6 @@
 
                     // Call applyAnimationToCharacter and wait for its completion
                     await applyAnimationToCharacter(selectedAnimation, dialogTitle.value, selectedCharacter);
-
-                    console.log("next");
                 });
 
                 // Use Promise.all to wait for all promises to complete
@@ -176,12 +217,53 @@
                     });
             }
 
-
             function CreateAnimation() {
+
+
+                const dialogRows = document.querySelectorAll('#dialogs .dialog_row');
+
+                dialogRows.forEach(function (row) {
+                    var audioInput = $(row).find('.audio_select')[0];
+                    var dialog_title = $(row).find('.dialog_title').val();
+                    var selectedAnimation = $(row).find('.animation_select').val();
+                    var characterSelect = parseInt($(row).find('.character_select').val());
+                    var selectedCharacter = scene.getMeshByUniqueID(characterSelect);
+                    var audio_player = $(row).find('.audio_player');
+                    var audio_duration = audio_player[0].duration;
+                    var _HeadMesh = searchForBlendShape(selectedCharacter);
+
+                    if (audioInput.files.length > 0 && _HeadMesh) {
+                        var formData = new FormData();
+                        formData.append('audioFile', audioInput.files[0]);
+
+                        $.ajax({
+                            url: 'http://127.0.0.1:8000/api/generatePhonemes',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                // Handle success response here
+                                console.log('File uploaded successfully:', response);
+
+                                var phonemes=JSON.parse(response.phonemes);
+                                lipSync_(phonemes, audio_duration,_HeadMesh,dialog_title);
+                                applyAnimationToCharacter(selectedAnimation, dialog_title, selectedCharacter);
+                            },
+                            error: function (error) {
+                                // Handle error here
+                                console.error('Error uploading file:', error);
+                            }
+                        });
+                    }
+
+
+                });
+
                 //1- upload all audio
                 //2- generate all lip sync animation
                 //3- append character animations
-                generateAnimations();
+                // generateAnimations();
                 //4- create camera animation switch
 
             }

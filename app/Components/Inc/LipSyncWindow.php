@@ -40,6 +40,7 @@ class LipSyncWindow extends Component
 
         // Construct the Python command with the audio URL and output file path
         $pythonCommand = "python -m allosaurus.run --timestamp=True -i $audioUrl --output=$outputFilePath";
+
         exec($pythonCommand);
 
 

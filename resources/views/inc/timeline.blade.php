@@ -142,10 +142,13 @@
         timeline.onDragFinished(function (obj) {
             console.log(obj.target.row.title);
             var ccurrent_anim_group = scene.getAnimationGroupByName(obj.target.row.title);
-            var new_start = obj.elements[0].keyframe.val / 90;
-            shiftKeyframes(ccurrent_anim_group, new_start);
-            ccurrent_anim_group._from = obj.target.row.keyframes[0].val / 60;
-            ccurrent_anim_group._to = obj.target.row.keyframes[1].val / 60;
+            if(ccurrent_anim_group){
+                var new_start = obj.elements[0].keyframe.val / 90;
+                shiftKeyframes(ccurrent_anim_group, new_start);
+                ccurrent_anim_group._from = obj.target.row.keyframes[0].val / 60;
+                ccurrent_anim_group._to = obj.target.row.keyframes[1].val / 60;
+            }
+
         });
 
 

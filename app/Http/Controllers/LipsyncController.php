@@ -57,7 +57,7 @@ class LipsyncController extends Controller
             return response()->json([
                 'message' => 'File uploaded and analyzed successfully',
                 'phonemes' => $jsonPhonemes,
-                'audio_url' => $audioStoragePath, // Use storage path instead of asset URL
+                'audio_url' => asset("storage/" .$audioPath), // Use storage path instead of asset URL
             ]);
         } else {
             return response()->json(['error' => 'No file uploaded'], 400);

@@ -252,8 +252,6 @@
                     var morphTargetKeys = [];
 
                     if (morphTarget.animations[0]) {
-
-
                         var anim = morphTarget.animations[0];
 
                         resampleAnimation(anim, 1);
@@ -519,7 +517,7 @@
             }
 
 
-            function lipSync_(phonemes, audio_duration, _HeadMesh, title) {
+            function lipSync_(phonemes, audio_duration, _HeadMesh, title,start_frame,audio_url) {
                 if (_HeadMesh) {
                     // Ensure that the mesh has a morph target manager
                     if (_HeadMesh.morphTargetManager) {
@@ -584,14 +582,14 @@
 
                         //apply offset frame
                         var animatables = MasteranimationGroup._targetedAnimations;
-                        var frame = (timeline.getTime() / 1000) * frameRate;
+
                         var customEventData = {
                             name_: _HeadMesh.name + "_" + title,
-                            url_: $("#current_audio_url").val(),
+                            url_: audio_url,
                         };
 
                         var event1 = new BABYLON.AnimationEvent(
-                            frame,
+                            start_frame,
                             function (customEventData) {
                                 if (playing === true) {
                                     // You can access custom values from the customEventData object
@@ -619,18 +617,17 @@
 
                                     }
 
-
                                 }
                             }.bind(null, customEventData), // Bind customEventData to the event handler
                             true
                         );
-
+                        console.log(event1);
                         // Attach your event to your animation
                         animatables[0].animation.addEvent(event1);
                         animatables.forEach(anim => {
                             var animations = anim.animation._keys;
                             animations.forEach(keyframe => {
-                                keyframe.frame += timeline.getTime() / 60;
+                                keyframe.frame += start_frame;
 
                             });
                         });
@@ -650,10 +647,10 @@
                                             height: 60,
                                         },
                                     },
-                                    offset: timeline.getTime() / 200,
+                                    offset: start_frame,
                                     keyframes: [
-                                        {val: timeline.getTime()},
-                                        {val: (timeline.getTime()) + MasteranimationGroup.to * frameRate}
+                                        {val:  framesToMilliseconds(start_frame)},
+                                        {val:  framesToMilliseconds(start_frame + MasteranimationGroup.to )}
                                     ],
                                 },
                             ];

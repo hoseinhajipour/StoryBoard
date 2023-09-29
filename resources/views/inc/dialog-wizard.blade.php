@@ -183,6 +183,7 @@
                 }
             }
 
+
             //------------------------------------------------//
             function generateAnimations() {
                 const dialogRows = document.querySelectorAll('#dialogs .dialog_row');
@@ -221,7 +222,8 @@
 
 
                 const dialogRows = document.querySelectorAll('#dialogs .dialog_row');
-
+                var start_frame = 0;
+                console.log("start frame : " + start_frame);
                 dialogRows.forEach(function (row) {
                     var audioInput = $(row).find('.audio_select')[0];
                     var dialog_title = $(row).find('.dialog_title').val();
@@ -231,6 +233,7 @@
                     var audio_player = $(row).find('.audio_player');
                     var audio_duration = audio_player[0].duration;
                     var _HeadMesh = searchForBlendShape(selectedCharacter);
+                    var nextframe = start_frame;
 
                     if (audioInput.files.length > 0 && _HeadMesh) {
                         var formData = new FormData();
@@ -245,16 +248,16 @@
                             success: function (response) {
                                 // Handle success response here
                                 console.log('File uploaded successfully:', response);
-
-                                var phonemes=JSON.parse(response.phonemes);
-                                lipSync_(phonemes, audio_duration,_HeadMesh,dialog_title);
-                                applyAnimationToCharacter(selectedAnimation, dialog_title, selectedCharacter);
+                                var phonemes = JSON.parse(response.phonemes);
+                                lipSync_(phonemes, audio_duration, _HeadMesh, dialog_title, nextframe, response.audio_url);
+                                applyAnimationToCharacter(selectedAnimation, dialog_title, selectedCharacter, nextframe);
                             },
                             error: function (error) {
                                 // Handle error here
                                 console.error('Error uploading file:', error);
                             }
                         });
+                        start_frame += secondsToFrames(audio_duration, frameRate);
                     }
 
 

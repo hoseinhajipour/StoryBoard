@@ -7,7 +7,7 @@ var shadowGenerator;
 var selectedMesh = null;
 var objectNames = [];
 var Maincamera;
-var frameRate = 30;
+var frameRate = 60;
 var HighlightLayer;
 var boundingBoxGizmo;
 const createScene = function (laoadformurl = null) {

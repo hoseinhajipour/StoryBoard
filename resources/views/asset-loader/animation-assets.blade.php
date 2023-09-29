@@ -123,7 +123,7 @@
             //  return totalKeyframesCount;
         }
 
-        function applyAnimationToCharacter(asset_url, name, Character) {
+        function applyAnimationToCharacter(asset_url, name, Character, start_frame) {
             console.log(asset_url);
             console.log(name);
             console.log(Character.name);
@@ -147,7 +147,7 @@
                                 // Offset the keyframes in the modified animation
                                 modifiedAnim.getKeys().forEach(keyframe => {
                                     // Offset the keyframe as needed
-                                    keyframe.frame += timeline.getTime() / 60;
+                                    keyframe.frame += start_frame;
                                 });
 
                                 // Push the modified animation to new_target.animations
@@ -164,7 +164,7 @@
                 lastGroup.enableBlending = true;
                 lastGroup.weight = 1.0;
                 lastGroup.name = Character.name + "_" + name;
-                lastGroup.offset = timeline.getTime() / 60;
+                lastGroup.offset = start_frame;
 
                 meshes.forEach(mesh => {
                     mesh.dispose();
@@ -188,14 +188,16 @@
                                     height: 60,
                                 },
                             },
-                            offset: timeline.getTime() / 200,
+                            offset: start_frame,
                             keyframes: [
-                                {val: timeline.getTime()},
-                                //  {val: (timeline.getTime()) + getTotalKeyframesCount(lastGroup)}
-                                {val: (timeline.getTime()) + endFrame_ * frameRate}
+                                {val: framesToMilliseconds(start_frame)},
+                                {val: framesToMilliseconds(start_frame + lastGroup.to)}
                             ],
                         },
                     ];
+                    console.log(lastGroup.to);
+                    console.log(rows[0].keyframes);
+
 
                     // Add keyframe
                     const currentModel = timeline.getModel();
@@ -209,9 +211,33 @@
             });
         }
 
+        function millisecondsToFrames(milliseconds) {
+            var framesPerSecond =  60;
+            var seconds = milliseconds / 1000; // Convert milliseconds to seconds
+            var frames = seconds * framesPerSecond;
+            return frames;
+        }
+
+        function framesToMilliseconds(frames) {
+            var framesPerSecond =  60;
+            var seconds = frames / framesPerSecond;
+            var milliseconds = seconds * 1000; // Convert seconds to milliseconds
+            return milliseconds;
+        }
+
+        // Example usage
+        var frames = 60; // You can change this to any number of frames
+        var milliseconds = framesToMilliseconds(frames);
+        console.log(milliseconds); // Output will be 1000 milliseconds
+
+
         function loadAnimation(asset_url, name) {
             var selectedCharcter = selectedMesh;
-            applyAnimationToCharacter(asset_url, name, selectedCharcter)
+
+            var start_frame = millisecondsToFrames(timeline.getTime());
+
+            console.log(start_frame);
+            applyAnimationToCharacter(asset_url, name, selectedCharcter, start_frame);
         }
     </script>
 

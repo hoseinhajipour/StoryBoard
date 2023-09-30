@@ -177,14 +177,10 @@ document.addEventListener("keydown", function (event) {
 
 
 canvas.addEventListener("contextmenu", function (event) {
-
-
     gizmoManager.positionGizmoEnabled = false;
     gizmoManager.rotationGizmoEnabled = false;
     gizmoManager.scaleGizmoEnabled = false;
     gizmoManager.boundingBoxGizmoEnabled = false;
-
-
     event.preventDefault(); // Prevent the default context menu
 });
 

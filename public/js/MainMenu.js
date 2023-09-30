@@ -5,6 +5,7 @@ function ExportScene() {
             maxframe = animationGroup.to;
         }
     });
+
     scene.animationGroups.forEach(function (animationGroup) {
         animationGroup.normalize(0, maxframe);
     });

@@ -96,11 +96,13 @@
         </script>
         <script>
             var excludeTargets = [];
+            var blinkDuration = 5; // Duration of the blink in frames
+            var blinkWait = 50; // Duration of the blink in frames
 
             function findMorph(Manager, name) {
                 for (let i = 0; i < Manager.numTargets; i++) {
                     const morphTarget = Manager.getTarget(i);
-                    if (morphTarget.name == name) {
+                    if (morphTarget.name === name) {
                         return morphTarget;
                     }
                 }
@@ -116,9 +118,7 @@
                 const stringWithoutUnicode = inputString.replace(/[^\x00-\x7F]+/g, '');
 
                 // Trim the resulting string (remove leading and trailing whitespace)
-                const trimmedString = stringWithoutUnicode.trim();
-
-                return trimmedString;
+                return stringWithoutUnicode.trim();
             }
 
             function mapPhoneme(phonemeContent) {
@@ -198,7 +198,7 @@
                 console.log(old_keys);
                 old_keys.forEach(old_frame => {
 
-                    if (old_frame.frame == frame) {
+                    if (old_frame.frame === frame) {
                         console.log(frame, old_frame.value);
                         return old_frame.value;
                     }
@@ -296,11 +296,11 @@
             }
 
             function AutoBlinkAnimate(animationGroup, audio_duration, _HeadMesh) {
+
                 var eyeBlinkLeft = findMorph(_HeadMesh.morphTargetManager, "eyeBlinkLeft");
                 var eyeBlinkRight = findMorph(_HeadMesh.morphTargetManager, "eyeBlinkRight");
 
-                var blinkDuration = 5; // Duration of the blink in frames
-                var blinkWait = 50; // Duration of the blink in frames
+
                 var totalFrames = secondsToFrames(audio_duration, frameRate);
 
                 // Calculate the number of complete blink cycles
@@ -366,6 +366,8 @@
             }
 
             function lipSync_(phonemes, audio_duration, _HeadMesh, title, start_frame, audio_url) {
+
+                console.log(start_frame);
                 if (_HeadMesh) {
                     // Ensure that the mesh has a morph target manager
                     if (_HeadMesh.morphTargetManager) {
@@ -404,11 +406,11 @@
                                 morphVisemeKeys[mapPhoneme(phoneme.content)].push(morphTargetKeys);
                             }
                         });
-
+                        console.log(morphVisemeKeys);
                         var FaceAnimationGroup = new BABYLON.AnimationGroup(_HeadMesh.name + "_talk_" + title);
 
                         combineKeyFrames(FaceAnimationGroup, morphVisemeKeys, audio_duration, _HeadMesh);
-                        AutoBlinkAnimate(FaceAnimationGroup, audio_duration, _HeadMesh);
+                      //  AutoBlinkAnimate(FaceAnimationGroup, audio_duration, _HeadMesh);
                         AllZeroKeyframes(FaceAnimationGroup, audio_duration, _HeadMesh);
 
                         FaceAnimationGroup.normalize(0, FaceAnimationGroup.to);
@@ -417,61 +419,63 @@
                         FaceAnimationGroup.enableBlending = true;
                         FaceAnimationGroup.weight = 1.0;
 
+                        console.log(FaceAnimationGroup);
+
                         updateObjectNamesFromScene();
 
-                        //apply offset frame
-                        var animatables = FaceAnimationGroup._targetedAnimations;
+                        //apply audio event
+                        if (timeline) {
 
+                            var animatables = FaceAnimationGroup._targetedAnimations;
 
-                        var customEventData = {
-                            name_: _HeadMesh.name + "_talk_" + title,
-                            url_: audio_url,
-                        };
+                            var customEventData = {
+                                name_: _HeadMesh.name + "_talk_" + title,
+                                url_: audio_url,
+                            };
 
-                        var event1 = new BABYLON.AnimationEvent(
-                            start_frame,
-                            function (customEventData) {
-                                if (playing === true) {
-                                    // You can access custom values from the customEventData object
-                                    var name_ = customEventData.name_;
+                            var event1 = new BABYLON.AnimationEvent(
+                                start_frame,
+                                function (customEventData) {
+                                    if (playing === true) {
+                                        // You can access custom values from the customEventData object
+                                        var name_ = customEventData.name_;
 
-                                    var soundByName = scene.getSoundByName(name_);
+                                        var soundByName = scene.getSoundByName(name_);
 
-                                    if (soundByName) {
-                                        soundByName.play();
-                                    } else {
-                                        var url_ = customEventData.url_;
-                                        // Load the sound and play it automatically once ready
-                                        new BABYLON.Sound(
-                                            name_,
-                                            url_,
-                                            scene,
-                                            function () {
-                                                this.play();
-                                            },
-                                            {
-                                                loop: false,
-                                                autoplay: false, // You can set this to true if you want it to autoplay
-                                            }
-                                        );
+                                        if (soundByName) {
+                                            soundByName.play();
+                                        } else {
+                                            var url_ = customEventData.url_;
+                                            // Load the sound and play it automatically once ready
+                                            new BABYLON.Sound(
+                                                name_,
+                                                url_,
+                                                scene,
+                                                function () {
+                                                    this.play();
+                                                },
+                                                {
+                                                    loop: false,
+                                                    autoplay: false, // You can set this to true if you want it to autoplay
+                                                }
+                                            );
+
+                                        }
 
                                     }
+                                }.bind(null, customEventData), // Bind customEventData to the event handler
+                                true
+                            );
+                            // Attach your event to your animation
+                            animatables[0].animation.addEvent(event1);
+                            animatables.forEach(anim => {
+                                var animations = anim.animation._keys;
+                                animations.forEach(keyframe => {
+                                    keyframe.frame += start_frame;
 
-                                }
-                            }.bind(null, customEventData), // Bind customEventData to the event handler
-                            true
-                        );
-                        // Attach your event to your animation
-                        animatables[0].animation.addEvent(event1);
-                        animatables.forEach(anim => {
-                            var animations = anim.animation._keys;
-                            animations.forEach(keyframe => {
-                                keyframe.frame += start_frame;
-
+                                });
                             });
-                        });
 
-                        if (timeline) {
                             // Add keyframe
                             let rows = [
                                 {

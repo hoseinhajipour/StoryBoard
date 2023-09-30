@@ -13,7 +13,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div id="dialog" class="modal-body">
                     <label>Title</label>
                     <input id="lipsync_title" type="text" class="form-control my-3">
                     <label> Zoom: <input type="range" min="10" max="1000" value="100"> </label>
@@ -59,8 +59,8 @@
             function openDialog() {
                 document.dispatchEvent(new Event("initAudio"));
 
-                $('#dialogLipsyncModal').modal('show');
-                /*
+               // $('#dialogLipsyncModal').modal('show');
+
                 dialog = $("#dialog").dialog({
                     minWidth: 200,
                     maxWidth: innerWidth / 2,
@@ -71,7 +71,7 @@
                     modal: false
                 });
 
-                 */
+
             }
 
             var dialog_lip_icons;
@@ -410,7 +410,7 @@
                         var FaceAnimationGroup = new BABYLON.AnimationGroup(_HeadMesh.name + "_talk_" + title);
 
                         combineKeyFrames(FaceAnimationGroup, morphVisemeKeys, audio_duration, _HeadMesh);
-                      //  AutoBlinkAnimate(FaceAnimationGroup, audio_duration, _HeadMesh);
+                        AutoBlinkAnimate(FaceAnimationGroup, audio_duration, _HeadMesh);
                         AllZeroKeyframes(FaceAnimationGroup, audio_duration, _HeadMesh);
 
                         FaceAnimationGroup.normalize(0, FaceAnimationGroup.to);
